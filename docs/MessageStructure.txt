@@ -1,0 +1,12 @@
+## MESSAGE STRUCTURE ##
+
+Compulsory Attributes (can be null)
+
+{
+	Request: "XYYY", 
+	SenderId: "XYZZ",
+	ReceiverId: "XYZZ", 
+	Message: ""
+}
+
+Futhermore, each case can have its own attributes. 

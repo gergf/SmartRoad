@@ -1,0 +1,24 @@
+## OBJECTS CODE INFO ##
+
+Every object has an id, which is 
+consists in a code of four digits. 
+
+## CODE EXPLANATION - XYZZ ##
+
+# 1st digit / What It is #
+    1: SmartCity
+    2: SmartRoad
+    3: SmartCar
+
+# 2nd digit / Type inside first digit subset #
+    1X: 
+        1: ...
+    2X:
+        1: Segment
+    3X:
+        1:...
+
+# 3st & 4th digits / Id of the object #
+    Example (X != Y): 
+        XX00, XX01, YY00 ... 
+

@@ -1,0 +1,32 @@
+## MESSAGE CODE INFO ##
+
+Every message starts with a code, which is
+used to figure out how to respond the request. 
+
+The code is consists of four digits. 
+
+## CODE EXPLANATION - XYYY ##
+
+# 1st digit / THEME # 
+    1: info-request
+    2: emergency 
+    3: ...
+    5: info-answer
+    6: emergency-answer
+    7: ...
+
+# 2nd-4th digits / REQUEST CODE #  
+    1xxx:
+        000: Where I am? 
+        ...
+    
+    2xxx:
+        000: S.O.S.
+        ...
+    
+    3xxx:
+        ...
+
+    5xxx:
+        000: Answer to Where I am?
+        ... 
