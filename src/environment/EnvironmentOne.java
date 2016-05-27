@@ -13,33 +13,30 @@ public class EnvironmentOne {
 	
 	public static void main(String[] args) {
 		/* New city */
-		SmartCity valencia = new SmartCity("1100", "valencia");
+		SmartCity valencia = new SmartCity("C-000", "valencia");
 		/* New road */
-		SmartRoad road = new SmartRoad("2100", "cv30", valencia); 
-		Segment seg1 = new Segment("2200","seg1", road, 0, 100);
-		Segment seg2 = new Segment("2201","seg2", road, 101, 200); 
-		
+		SmartRoad road_A = new SmartRoad("R-000", "A", "0", valencia);
+		SmartRoad road_B = new SmartRoad("R-001", "B", "1", valencia);
+		SmartRoad road_C = new SmartRoad("R-002", "C", "2", valencia);
+		SmartRoad road_D = new SmartRoad("R-003", "D", "3", valencia);
+		SmartRoad road_E = new SmartRoad("R-004", "E", "4", valencia);
 		/* New car*/
-		SmartCar car = new SmartCar("3100"); 
+		SmartCar ambulance = new SmartCar("V-000", "00"); 
+		SmartCar car_1 = new SmartCar("V-001", "43");
 		
-		System.out.println(car.getTopic());
 		
-		/* Simulates the car sarching for a topic */
-		car.WhereIAm();
-		
-		/* Waits until the car has new information, and then reload */
-		while(!car.getNeedUpdate()){
-			//Nothing
+		/* Simulates call between devices */
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		
-		/* The car has received the message */
-		car.relaunch();
-		System.out.println(car.getTopic());
-		
-		//TODO: El mensaje ha de ser asíncrono. Una vez la carretera la haya añadido hacer el SOS.
-		
-		road.addSmartCar(car);
-		//car.sendSOS();
+		// Relaunch the car with the new information
+		car_1.relaunch(); 
+		ambulance.relaunch();
+
+		// In this point the car knows the road. 
 	}
 
 }

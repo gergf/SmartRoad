@@ -16,26 +16,32 @@ public class SmartCar implements MqttCallback{
 	/* Class attributes */
     private String id;
     private String topic;
-    private int myubication;
+    private String mylocation;
     private boolean needUpdate; 
     
     /* Communication */
-    private MqttClient client;
-    private boolean waitingAnswer; 
+    private MqttClient client; 
 
     /* Constructors */
-    public SmartCar(String id){
+    public SmartCar(String id, String location){
         /* Initialization */
     	this.id = id;  
     	this.needUpdate = false; 
-    	/* this should be set by asking */
-        this.topic = "valencia/road/cv30";
-        this.myubication = 34; 
-        this.waitingAnswer = false; 
+    	/* SOLUCIONAR: this should be set by asking */
+        this.topic = "valencia";
+        
+        this.mylocation = location;  
         
         /* Connection */
         this.connect();
         this.subscribe();
+        
+        /* Confirm Configuration */
+        System.out.println(this.id + " configured!");
+        
+        /* Where Am I? */
+        System.out.println(this.id + ": Looking for a new topic...");
+        this.WhereAmI();
     }
     
     /* Getters and Setters */
@@ -65,7 +71,7 @@ public class SmartCar implements MqttCallback{
     	try{
     		this.client.subscribe(this.topic);	
     	}catch(Exception e){
-    		System.err.println("SmartCar/subscribe: Something wrong happend.");
+    		System.err.println(this.id + " SmartCar/subscribe: Something wrong happend.");
     		System.err.println(e);
     	}
     }
@@ -76,11 +82,11 @@ public class SmartCar implements MqttCallback{
 	private void connect(){
 		try{
 			/* New client */
-    		this.client = new MqttClient(SetUp.BROKER_URL,"SmartCar"+this.id);
+    		this.client = new MqttClient(SetUp.BROKER_URL,this.id);
 			this.client.setCallback(this);
 			this.client.connect(); 
 		}catch(Exception e){
-			System.err.println("SmartCar/connect: ERROR");
+			System.err.println(this.id + " SmartCar/connect: ERROR");
 			e.printStackTrace();
 		}
 	}
@@ -92,7 +98,7 @@ public class SmartCar implements MqttCallback{
 		try{
 			this.client.disconnect();
 		}catch(Exception e){
-			System.err.println("SmartCar/disconnect: ERROR");
+			System.err.println(this.id + " SmartCar/disconnect: ERROR");
 			e.printStackTrace();
 		}
 	}
@@ -105,7 +111,10 @@ public class SmartCar implements MqttCallback{
 		this.disconnect();
 		this.connect();
 		this.subscribe();
+		/* update variable */
 		this.needUpdate = false; 
+		/* display new configuration */
+		System.out.println(this.id + " my new topic is: " + this.topic); 
 	}
 	
 	
@@ -116,15 +125,15 @@ public class SmartCar implements MqttCallback{
 	 * 
 	 * In a real context, the car doesn't know about the road. 
 	 */
-	public void WhereIAm(){
+	public void WhereAmI(){
 		try{
 			/* Create the message in JSON Format */
 			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Request", "1000");
+			jsmessage.addProperty("Code", "1000");
 			jsmessage.addProperty("SenderId", this.id);
 			jsmessage.addProperty("ReceiverId", "null");
 			jsmessage.addProperty("Message", "null");
-			jsmessage.addProperty("Ubication", this.myubication);
+			jsmessage.addProperty("Location", this.mylocation);
 			
 			/* Create a Mqtt message */
 			MqttMessage mes = new MqttMessage();
@@ -133,22 +142,20 @@ public class SmartCar implements MqttCallback{
 			/* Push the message */
 			this.client.publish(this.topic, mes);
 			
-			/* Set up the car for waiting an answer */
-			this.waitingAnswer = true;
 		}catch(Exception e){
-			System.err.println("SmartCar/WhereIAm: ERROR");
+			System.err.println(this.id + " SmartCar/WhereIAm: ERROR");
 			e.printStackTrace();
 		}
 	}
 
 	/**
-     * 
+     * Rebuild this method to work with the new code format 
      */
     public void sendSOS(){
     	try{
     		/* New message */
     		MqttMessage message = new MqttMessage();
-    		message.setPayload(("2000:" + this.id + ":{ubication:blabla}").getBytes());
+    		message.setPayload(("2000:" + this.id + ":{location:blabla}").getBytes());
 
     		/* Publish the message */
     		this.client.publish(this.topic, message);
@@ -175,31 +182,33 @@ public class SmartCar implements MqttCallback{
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		/* If it is waiting an answer then reads the message */
-		if(this.waitingAnswer){
-			String text = new String(message.getPayload()); 
-			JsonObject js = new JsonParser().parse(text).getAsJsonObject();
-			String ReceiverId = js.get("ReceiverId").getAsString();
-			
-			/* If the message is addressed to me */
-			if(ReceiverId.equals(this.id)){
-				String request = js.get("Request").getAsString();
-				/* THEME */
-				switch(request.substring(0,1)){
-					/* Answer Info */
-					case "5":
-						switch(request.substring(1,4)){
-							/* Where I Am */
-							case "000":
-								String ntopic = js.get("Topic").getAsString();
-								this.topic = ntopic; 
-								this.needUpdate = true; 
-								break;
-						}
-						break;
-				}
-				/* Answer Received */
-				this.waitingAnswer = false; 
+		/* Parse MqttMessage to Json and string*/
+		String text = new String(message.getPayload()); 
+		JsonObject js = new JsonParser().parse(text).getAsJsonObject();
+		String ReceiverId = js.get("ReceiverId").getAsString();
+		
+		/* If the message is addressed to me */
+		if(ReceiverId.equals(this.id)){
+			String code = js.get("Code").getAsString(); // Y XXX
+			String theme = code.substring(0,1); // Y 
+			String requestCode = code.substring(1,4); // XXX
+			/* THEME */
+			switch(theme){
+				/* Answer Info */
+				case "5":
+					switch(requestCode){
+						/* Where I Am */
+						case "000":
+							String new_topic = js.get("Topic").getAsString();
+							this.topic = new_topic; 
+							this.needUpdate = true; 
+							break;
+					}
+					break;
+				
+				/* Non-valid message (theme)*/
+				default:
+					break;
 			}
 		}
 	}

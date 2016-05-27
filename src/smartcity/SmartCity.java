@@ -7,6 +7,9 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import environment.SetUp;
 import smartroad.SmartRoad;
 
@@ -15,6 +18,7 @@ public class SmartCity implements MqttCallback{
 	/* Class attributes */
     private String id; 
     private String name;
+    private String cityTopic; 
     
     /* Lists */
     private ArrayList<SmartRoad> SmartRoadList;
@@ -28,15 +32,19 @@ public class SmartCity implements MqttCallback{
     	/* Initialization */
         this.id = id; 
         this.name = name; 
+        this.cityTopic = name + "/";
         
         this.SmartRoadList = new ArrayList<>();
         this.TopicList = new ArrayList<>();
         this.TopicList.add(name+"/road");
-        this.TopicList.add(name+"/"); // Maybe this should be removed. 
+        this.TopicList.add(cityTopic);  
         
         /* Connection */
         this.connect();
         this.subscribe();
+        
+        /* Confirm configuration */
+        System.out.println(this.id + "(" + this.name + ") configured!");
     }
     
     /* Getters and Setters */
@@ -51,6 +59,10 @@ public class SmartCity implements MqttCallback{
 	public String getName(){
 		return this.name; 
 	}
+	
+	public String getCityTopic(){
+		return this.cityTopic;
+	}
 
 	public ArrayList<SmartRoad> getSmartRoadList() {
 		return SmartRoadList;
@@ -62,9 +74,11 @@ public class SmartCity implements MqttCallback{
         
     /* Methods */
 	public void addSmartRoad(SmartRoad road){
+		/* Check if the road is already inside?? */
 		this.SmartRoadList.add(road); 
-		this.TopicList.add(name+"/road/"+road.getName()); 
-		road.setSmartCity(this);
+		/* The city does not listen in this topic,only stores the name */
+		this.TopicList.add(this.name+"/road/"+road.getName()); 
+		// road.setSmartCity(this);
 	}
 	
 	/**
@@ -75,6 +89,7 @@ public class SmartCity implements MqttCallback{
     		for(String t : TopicList)
     			this.client.subscribe(t);
     		
+    		
     	}catch(Exception e){
     		System.err.println("SmartCity/subscribe: Something wrong happend.");
     		System.err.println(e);
@@ -84,7 +99,7 @@ public class SmartCity implements MqttCallback{
 	public void connect(){
 		try{
 			/* New client */
-    		this.client = new MqttClient(SetUp.BROKER_URL, this.name);
+    		this.client = new MqttClient(SetUp.BROKER_URL, this.id);
 			client.setCallback(this);
 			client.connect(); 
 		}catch(Exception e){
@@ -93,7 +108,7 @@ public class SmartCity implements MqttCallback{
 		}
 	}
 
-	/* MqttCallback Interface */
+	/* ------------ MqttCallback Interface ------------ */
 	
 	@Override
 	public void connectionLost(Throwable arg0) {
@@ -109,10 +124,82 @@ public class SmartCity implements MqttCallback{
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		System.out.println("I am " + this.name + " and I've listened this message:");
-		System.out.println(topic);
-		System.out.println(new String(message.getPayload()));
+		System.out.println(this.id + ": " + new String(message.getPayload()));
+		String code, theme, requestCode;
+		JsonObject js; 
+		try{
+			/* Extract request code */
+			String text = new String(message.getPayload()); 
+			js = new JsonParser().parse(text).getAsJsonObject();
+			code = js.get("Code").getAsString(); // Y XXX
+			theme = code.substring(0,1); // Y 
+			requestCode = code.substring(1,4); // XXX
+		}catch(Exception e){
+			System.err.println(this.id + "Error al leer el mensaje JSON");
+			return; // Exit method 
+		}
+		
+		/* The message has been read successfully */
+		switch(theme){
+			/* info */
+			case "1":
+				switch(requestCode){
+					/* Where I am? */
+					case "000":
+						try{
+							String loc = js.get("Location").getAsString();
+							String senderId = js.get("SenderId").getAsString();
+							String[] args = {senderId, "", loc};
+							new AnswerRequest(this, "1000", args).start();
+						}catch(Exception e){
+							System.err.println(this.id + "messageArrived > Theme 1 > 000: ERROR"); 
+						} 
+						break;
+				}
+				break;
+				
+			/* emergency */
+			case "2":
+				switch(requestCode){
+					/* S.O.S */
+					case "000":
+						break;
+				}/* end Switch */
+				break; 
+				
+			/* Answers */
+			case "5":
+				switch(requestCode){
+				case "000":
+					/* Nothing, this is an answer to Where Am I? */
+					break;
+				}
+				break;
+			
+			/* Non-valid message (theme)*/
+			default:
+				System.err.println(this.id + " Non-valid theme."); 
+				System.err.println("Theme: " + theme + " RequestCode: " + requestCode);
+				break;
+		}
+		
+	}/* end messageArrived */
+	/* ------------ end MqttInterface ------------ */
+
+	
+	/* ------------ SmartCity route Methods ------------ */ 
+	
+	public SmartRoad calculatelocation(String location){
+		// Calculate correct location here 
+		String carRangeMap = location.substring(0,1); 
+		for(SmartRoad r : this.getSmartRoadList()){
+			if(r.getRangeMap().equals(carRangeMap)){
+				return r;
+			}
+		}
+		return null; 
 	}
 	
-	 /* end MqttInterface */
-}
+	/* ------------  end SmartCity route Methods ------------ */ 
+
+}/* end Class */

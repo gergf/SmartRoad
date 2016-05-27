@@ -23,6 +23,7 @@ public class SmartRoad implements MqttCallback{
     private String name; //Should be lower letters 
     private SmartCity mycity;
     private String topic; 
+    private String rangeMap; 
     
     /* Lists */
     private ArrayList<Segment> segmentsList; 
@@ -32,12 +33,15 @@ public class SmartRoad implements MqttCallback{
     private MqttClient client; 
     
     /* Constructors */
-    public SmartRoad(String id, String name, SmartCity city){
+    public SmartRoad(String id, String name, String rangeMap, SmartCity city){
     	/* Initialization */
         this.id = id; 
         this.name = name; 
+        this.rangeMap = rangeMap; 
+        
         this.mycity = city; 
         this.topic = this.mycity.getName() + "/road/" + this.name;
+        
         this.segmentsList = new ArrayList<>(); 
         this.carsList = new HashSet<>(); 
         
@@ -47,6 +51,9 @@ public class SmartRoad implements MqttCallback{
         /*Start listening */
         this.connect();
         this.subscribe(); 
+        
+        /* Confirm Configuration */
+        System.out.println(this.id + "(" + this.name + ") configured!");
     }
     
     /* Getters and Setters */
@@ -70,7 +77,12 @@ public class SmartRoad implements MqttCallback{
     public String getTopic(){
     	return this.topic; 
     }
+    
+    public String getRangeMap(){
+    	return this.rangeMap;
+    }
 
+    /* Why? This is already done in the constructor */
     public void setSmartCity(SmartCity c){
     	this.mycity = c; 
     	this.topic = this.mycity.getName() + "/road/" + this.name; 
@@ -89,7 +101,7 @@ public class SmartRoad implements MqttCallback{
     	try{
     		this.client.subscribe(this.topic);
     	}catch(Exception e){
-    		System.err.println("SmartRoad/subscribe: Something wrong happend.");
+    		System.err.println(this.id + " SmartRoad/subscribe: Something wrong happend.");
     		System.err.println(e);
     	}
     }
@@ -97,7 +109,7 @@ public class SmartRoad implements MqttCallback{
     public void connect(){
 		try{
 			/* New client */
-    		this.client = new MqttClient(SetUp.BROKER_URL, this.name);
+    		this.client = new MqttClient(SetUp.BROKER_URL, this.id);
 			client.setCallback(this);
 			client.connect(); 
 		}catch(Exception e){
@@ -151,63 +163,31 @@ public class SmartRoad implements MqttCallback{
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
+		/* Test */
+		SetUp.testMessage(this.name, this.id, topic, message);
+		
 		String text = new String(message.getPayload()); 
 		/* Extract request code */
 		JsonObject js = new JsonParser().parse(text).getAsJsonObject();
-		String request = js.get("Request").getAsString();
+		String code = js.get("Code").getAsString(); // Y XXX
+		String theme = code.substring(0,1); // Y 
+		String requestCode = code.substring(1,4); // XXX
 		/* THEME */
-		switch(request.substring(0, 1)){
+		switch(theme){
+		
 			/* info */
 			case "1":
-				switch(request.substring(1,4)){
-					/* Where I am? */
-					case "000":
-						String ubi = js.get("Ubication").getAsString();
-						String senderId = js.get("SenderId").getAsString(); 
-						this.info000(ubi, senderId);
-						break;
-				}
 				break;
 				
 			/* emergency */
 			case "2":
-				switch(request){
-				/* S.O.S */
-				case "000":
-					break;
-			}
 				break; 
+		
 		}/* endSwitch*/
 		
-		
-	}
+	}/*endMethod*/
 	
-	 /* end MqttInterface */
+	 /* ------------ end MqttInterface ------------ */
     
-	/* Request Methods */
-	private boolean info000(String ubication, String receiverId){
-		//TODO: Calculate where is the car 
-		String address = this.segmentsList.get(0).getName();
-		try{
-			/* Create the message in JSON Format */
-			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Request", "5000");
-			jsmessage.addProperty("SenderId", this.id);
-			jsmessage.addProperty("ReceiverId", receiverId);
-			jsmessage.addProperty("Message", "null");
-			
-			/*Add topic */
-			jsmessage.addProperty("Topic", this.topic + "/" + address);
-			
-			/* Create a Mqtt message */
-			MqttMessage mes = new MqttMessage();
-			mes.setPayload((jsmessage.toString()).getBytes());
-			
-			this.client.publish(this.topic, mes);
-		}catch(Exception e){
-			System.err.println("SmartRoad/info000 ERROR");
-			e.printStackTrace();
-		}
-		return true; 
-	}
+	
 }
