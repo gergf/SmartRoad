@@ -164,7 +164,7 @@ public class SmartRoad implements MqttCallback{
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		/* Test */
-		SetUp.testMessage(this.name, this.id, topic, message);
+		// SetUp.testMessage(this.name, this.id, topic, message);
 		
 		String text = new String(message.getPayload()); 
 		/* Extract request code */
@@ -174,14 +174,29 @@ public class SmartRoad implements MqttCallback{
 		String requestCode = code.substring(1,4); // XXX
 		/* THEME */
 		switch(theme){
+	
+		/* info request */
+		case "1":
+			break;
+			
+		/* emergency request */
+		case "2":
+			switch(requestCode){
+				/* S.O.S. call */
+				case "000":
+					/* To answer the car that its message has been received */
+					String senderId = js.get("SenderId").getAsString();
+					String[] args = {senderId, "Check S.O.S", ""};
+					new RoadAnswerRequest(this, "2000", args).start();
+					
+					/* To communicate the city the emergency */
+					break;
+			}
+			break;
 		
-			/* info */
-			case "1":
-				break;
-				
-			/* emergency */
-			case "2":
-				break; 
+		/* emergency answer */
+		case "6":
+			break;
 		
 		}/* endSwitch*/
 		

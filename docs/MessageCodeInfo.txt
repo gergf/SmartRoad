@@ -32,4 +32,5 @@ The code is consists of four digits.
         ...
 
     6xxx:
-        000: Answer to S.O.S 
+        000: Answer (CHECK) to S.O.S
+        001: Time until the help comes  

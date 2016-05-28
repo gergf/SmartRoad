@@ -124,7 +124,7 @@ public class SmartCity implements MqttCallback{
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		System.out.println(this.id + ": " + new String(message.getPayload()));
+		// System.out.println(this.id + ": " + new String(message.getPayload()));
 		String code, theme, requestCode;
 		JsonObject js; 
 		try{
@@ -141,46 +141,46 @@ public class SmartCity implements MqttCallback{
 		
 		/* The message has been read successfully */
 		switch(theme){
-			/* info */
-			case "1":
-				switch(requestCode){
-					/* Where I am? */
-					case "000":
-						try{
-							String loc = js.get("Location").getAsString();
-							String senderId = js.get("SenderId").getAsString();
-							String[] args = {senderId, "", loc};
-							new AnswerRequest(this, "1000", args).start();
-						}catch(Exception e){
-							System.err.println(this.id + "messageArrived > Theme 1 > 000: ERROR"); 
-						} 
-						break;
-				}
-				break;
-				
-			/* emergency */
-			case "2":
-				switch(requestCode){
-					/* S.O.S */
-					case "000":
-						break;
-				}/* end Switch */
-				break; 
-				
-			/* Answers */
-			case "5":
-				switch(requestCode){
+		/* info */
+		case "1":
+			switch(requestCode){
+				/* Where I am? */
 				case "000":
-					/* Nothing, this is an answer to Where Am I? */
+					try{
+						String loc = js.get("Location").getAsString();
+						String senderId = js.get("SenderId").getAsString();
+						String[] args = {senderId, "", loc};
+						new CityAnswerRequest(this, "1000", args).start();
+					}catch(Exception e){
+						System.err.println(this.id + "messageArrived > Theme 1 > 000: ERROR"); 
+					} 
 					break;
-				}
-				break;
+			}
+			break;
 			
-			/* Non-valid message (theme)*/
-			default:
-				System.err.println(this.id + " Non-valid theme."); 
-				System.err.println("Theme: " + theme + " RequestCode: " + requestCode);
+		/* emergency */
+		case "2":
+			switch(requestCode){
+				/* S.O.S */
+				case "000":
+					break;
+			}/* end Switch */
+			break; 
+			
+		/* Answers */
+		case "5":
+			switch(requestCode){
+			case "000":
+				/* Nothing, this is an answer to Where Am I? */
 				break;
+			}
+			break;
+		
+		/* Non-valid message (theme)*/
+		default:
+			System.err.println(this.id + " Non-valid theme."); 
+			System.err.println("Theme: " + theme + " RequestCode: " + requestCode);
+			break;
 		}
 		
 	}/* end messageArrived */

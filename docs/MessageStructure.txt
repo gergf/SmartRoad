@@ -3,7 +3,7 @@
 Compulsory Attributes (can be null)
 
 {
-	Request: "XYYY", 
+	Code: "XYYY", 
 	SenderId: "XYZZ",
 	ReceiverId: "XYZZ", 
 	Message: ""

@@ -37,7 +37,8 @@ public class EnvironmentOne {
 		car_1.relaunch(); 
 		ambulance.relaunch();
 
-		// In this point the car knows the road. 
+		// Car S-O-S 
+		car_1.sendSOS();
 	}
 
 }

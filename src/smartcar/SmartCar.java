@@ -118,6 +118,8 @@ public class SmartCar implements MqttCallback{
 	}
 	
 	
+	/* Communication methods */
+	
 	/**
 	 * Ask the nearest road where it is, and waits the answer. 
 	 * Currently, the road is given by default and it's the segment 
@@ -132,7 +134,7 @@ public class SmartCar implements MqttCallback{
 			jsmessage.addProperty("Code", "1000");
 			jsmessage.addProperty("SenderId", this.id);
 			jsmessage.addProperty("ReceiverId", "null");
-			jsmessage.addProperty("Message", "null");
+			jsmessage.addProperty("Message", "WhereAmI");
 			jsmessage.addProperty("Location", this.mylocation);
 			
 			/* Create a Mqtt message */
@@ -158,7 +160,7 @@ public class SmartCar implements MqttCallback{
 			jsmessage.addProperty("Code", "2000");
 			jsmessage.addProperty("SenderId", this.id);
 			jsmessage.addProperty("ReceiverId", "null");
-			jsmessage.addProperty("Message", "null");
+			jsmessage.addProperty("Message", "S.O.S");
 			jsmessage.addProperty("Location", this.mylocation);
 			
 			/* Create a Mqtt message */
@@ -167,6 +169,7 @@ public class SmartCar implements MqttCallback{
 			
 			/* Push the message */
 			this.client.publish(this.topic, mes);
+			System.out.println(this.id + ": Call S.0.S sent."); 
 			
 		}catch(Exception e){
 			System.err.println(this.id + " SmartCar/SOS: ERROR");
@@ -197,37 +200,38 @@ public class SmartCar implements MqttCallback{
 		
 		/* If the message is addressed to me */
 		if(ReceiverId.equals(this.id)){
+			
 			String code = js.get("Code").getAsString(); // Y XXX
 			String theme = code.substring(0,1); // Y 
 			String requestCode = code.substring(1,4); // XXX
 			/* THEME */
 			switch(theme){
-				/* Answer Info */
-				case "5":
-					switch(requestCode){
-						/* Where I Am */
-						case "000":
-							String new_topic = js.get("Topic").getAsString();
-							this.topic = new_topic; 
-							this.needUpdate = true; 
-							break;
-					}
-					break;
-				
-				/* Answer to Emergency */
-				case "6": 
-					switch(requestCode){
-						/* S.O.S call */
-						case "000":
-							System.out.println(this.id + ": I've received an answer for my SOS call. ");
-							break;
-					}
-					break;
-				
-				/* Non-valid message (theme)*/
-				default:
-					System.err.println(this.id + ": MessageArrivedERROR Non-valid theme. ");
-					break;
+			/* Answer Info */
+			case "5":
+				switch(requestCode){
+					/* Where I Am */
+					case "000":
+						String new_topic = js.get("Topic").getAsString();
+						this.topic = new_topic; 
+						this.needUpdate = true; 
+						break;
+				}
+				break;
+			
+			/* Answer to Emergency */
+			case "6": 
+				switch(requestCode){
+					/* S.O.S call */
+					case "000":
+						System.out.println(this.id + ": I've received an answer for my SOS call. ");
+						break;
+				}
+				break;
+			
+			/* Non-valid message (theme)*/
+			default:
+				System.err.println(this.id + ": MessageArrivedERROR Non-valid theme. ");
+				break;
 			}
 		}
 	}
