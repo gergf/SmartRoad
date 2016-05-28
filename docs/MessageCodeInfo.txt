@@ -29,4 +29,7 @@ The code is consists of four digits.
 
     5xxx:
         000: Answer to Where I am?
-        ... 
+        ...
+
+    6xxx:
+        000: Answer to S.O.S 

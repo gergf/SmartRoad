@@ -149,21 +149,29 @@ public class SmartCar implements MqttCallback{
 	}
 
 	/**
-     * Rebuild this method to work with the new code format 
+     * It sends a call of S.O.S 
      */
     public void sendSOS(){
     	try{
-    		/* New message */
-    		MqttMessage message = new MqttMessage();
-    		message.setPayload(("2000:" + this.id + ":{location:blabla}").getBytes());
-
-    		/* Publish the message */
-    		this.client.publish(this.topic, message);
-    		
-    	}catch(Exception e){
-    		System.err.println("SmartCar/sendSOS: Algo no ha ido bien al enviar el mensaje.");
-    		System.err.println(e);
-    	}
+			/* Create the message in JSON Format */
+			JsonObject jsmessage = new JsonObject();
+			jsmessage.addProperty("Code", "2000");
+			jsmessage.addProperty("SenderId", this.id);
+			jsmessage.addProperty("ReceiverId", "null");
+			jsmessage.addProperty("Message", "null");
+			jsmessage.addProperty("Location", this.mylocation);
+			
+			/* Create a Mqtt message */
+			MqttMessage mes = new MqttMessage();
+			mes.setPayload((jsmessage.toString()).getBytes());
+			
+			/* Push the message */
+			this.client.publish(this.topic, mes);
+			
+		}catch(Exception e){
+			System.err.println(this.id + " SmartCar/SOS: ERROR");
+			e.printStackTrace();
+		}
     }
 
     /* MqttCallback Interface */
@@ -206,8 +214,19 @@ public class SmartCar implements MqttCallback{
 					}
 					break;
 				
+				/* Answer to Emergency */
+				case "6": 
+					switch(requestCode){
+						/* S.O.S call */
+						case "000":
+							System.out.println(this.id + ": I've received an answer for my SOS call. ");
+							break;
+					}
+					break;
+				
 				/* Non-valid message (theme)*/
 				default:
+					System.err.println(this.id + ": MessageArrivedERROR Non-valid theme. ");
 					break;
 			}
 		}
