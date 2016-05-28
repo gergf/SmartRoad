@@ -81,6 +81,10 @@ public class SmartRoad implements MqttCallback{
     public String getRangeMap(){
     	return this.rangeMap;
     }
+    
+    public String getTopicMyCity(){
+    	return this.mycity.getCityTopic();
+    }
 
     /* Why? This is already done in the constructor */
     public void setSmartCity(SmartCity c){
@@ -190,7 +194,10 @@ public class SmartRoad implements MqttCallback{
 					new RoadAnswerRequest(this, "2000", args).start();
 					
 					/* To communicate the city the emergency */
-					
+					String location = js.get("Location").getAsString(); 
+					/* Si utilizas el mismo array the strings de arriba pasan cosas raras */
+					String[] args2 = {this.mycity.getId(), text, location, "1"};
+					new RoadAnswerRequest(this, "2000", args2).start(); 
 					break;
 			}
 			break;

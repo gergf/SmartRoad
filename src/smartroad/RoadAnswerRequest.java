@@ -52,6 +52,7 @@ public class RoadAnswerRequest extends Thread {
 				break;
 			/* Send the emergency to the city */
 			case "1": 
+				this.communicate2000toCity(args[0], args[1], args[2]);
 				break;
 			}
 			break;
@@ -71,6 +72,11 @@ public class RoadAnswerRequest extends Thread {
 	}
 	
 	/* Answer methods */
+	/**
+	 * It sends a message to the car which has sent the S.O.S
+	 * @param receiverId
+	 * @param message
+	 */
 	private void answer2000(String receiverId, String message ){
 		try{
 			JsonObject js = new JsonObject(); 
@@ -83,11 +89,33 @@ public class RoadAnswerRequest extends Thread {
 			mes.setPayload(js.toString().getBytes());
 			
 			this.client.publish(road.getTopic(), mes);
-			
 		}catch(Exception e){
 			System.err.println(road.getId() + ":Thread-" + this.threadId + " ERROR in answer2000");
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * It send a message to the city communicating the emergency. 
+	 */
+	private void communicate2000toCity(String receiverId, String message, String location){
+		try{
+			JsonObject js = new JsonObject(); 
+			js.addProperty("Code", "2000");
+			js.addProperty("SenderId",  road.getId());
+			js.addProperty("ReceiverId",  receiverId); 
+			js.addProperty("Message", message);
+			js.addProperty("Location",  location);
+			
+			MqttMessage mes = new MqttMessage(); 
+			mes.setPayload(js.toString().getBytes());
+			
+			this.client.publish(road.getTopicMyCity(), mes);
+		}catch(Exception e){
+			System.err.println(road.getId() + ":Thread-" + this.threadId + "ERROR in communicato2000toCity");
+			e.printStackTrace();
+		}
+		
 	}
 
 }

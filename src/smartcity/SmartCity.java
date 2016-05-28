@@ -163,6 +163,7 @@ public class SmartCity implements MqttCallback{
 			switch(requestCode){
 				/* S.O.S */
 				case "000":
+					System.err.println(this.id + ": SOS received"); 
 					break;
 			}/* end Switch */
 			break; 
