@@ -21,10 +21,13 @@ public class RoadAnswerRequest extends Thread {
 	 * 0: ReceiverId
 	 * 1: Message 
 	 * 2: Location
+	 * 3: Flag Code - En el caso de que en una contestacion se deban 
+	 * enviar varios mensajes, para distinguir que mensaje se quiere enviar.
 	 */
 	private String[] args; 
 	private SmartRoad road;
 	private String threadId; 
+	private String flag; 
 	
 	/* Communication */
 	MqttClient client; 
@@ -33,6 +36,7 @@ public class RoadAnswerRequest extends Thread {
 		this.road = road; 
 		this.code = code; 
 		this.args = args; 
+		this.flag = args[3];
 		this.threadId = MqttClient.generateClientId();
 		this.connect();
 	}
@@ -41,7 +45,15 @@ public class RoadAnswerRequest extends Thread {
 	public void run(){
 		switch(this.code){
 		case "2000": 
-			this.answer2000(args[0], args[1]); 
+			switch(this.flag){
+			/* answer the request 2000 to check the SOS call */
+			case "0":	
+				this.answer2000(args[0], args[1]);
+				break;
+			/* Send the emergency to the city */
+			case "1": 
+				break;
+			}
 			break;
 		}
 	}

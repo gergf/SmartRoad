@@ -186,10 +186,11 @@ public class SmartRoad implements MqttCallback{
 				case "000":
 					/* To answer the car that its message has been received */
 					String senderId = js.get("SenderId").getAsString();
-					String[] args = {senderId, "Check S.O.S", ""};
+					String[] args = {senderId, "Check S.O.S", "", "0"};
 					new RoadAnswerRequest(this, "2000", args).start();
 					
 					/* To communicate the city the emergency */
+					
 					break;
 			}
 			break;
