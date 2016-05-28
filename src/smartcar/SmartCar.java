@@ -3,7 +3,6 @@ package smartcar;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import com.google.gson.JsonObject;
@@ -17,7 +16,7 @@ public class SmartCar implements MqttCallback{
     private String id;
     private String topic;
     private String mylocation;
-    private boolean needUpdate; 
+    private String type; // 0: Civil, 1: Ambulance, 2: Police...  
     
     /* Communication */
     private MqttClient client; 
@@ -26,7 +25,29 @@ public class SmartCar implements MqttCallback{
     public SmartCar(String id, String location){
         /* Initialization */
     	this.id = id;  
-    	this.needUpdate = false; 
+    	this.type = "0"; 
+    	/* SOLUCIONAR: this should be set by asking */
+        this.topic = "valencia";
+        
+        this.mylocation = location;  
+        
+        /* Connection */
+        this.connect();
+        this.subscribe();
+        
+        /* Confirm Configuration */
+        System.out.println(this.id + " configured!");
+        
+        /* Where Am I? */
+        System.out.println(this.id + ": Looking for a new topic...");
+        this.WhereAmI();
+    }
+    
+    /* Constructor with type */
+    public SmartCar(String id, String location, String type){
+        /* Initialization */
+    	this.id = id;  
+    	this.type = type;  
     	/* SOLUCIONAR: this should be set by asking */
         this.topic = "valencia";
         
@@ -60,10 +81,7 @@ public class SmartCar implements MqttCallback{
 	public String getTopic(){
 		return this.topic;
 	}
-	
-	public boolean getNeedUpdate(){
-		return this.needUpdate;
-	}
+
 	/**
      * It subscribes the MqttClient to the topic of the object 
      */
@@ -111,8 +129,6 @@ public class SmartCar implements MqttCallback{
 		this.disconnect();
 		this.connect();
 		this.subscribe();
-		/* update variable */
-		this.needUpdate = false; 
 		/* display new configuration */
 		System.out.println(this.id + " my new topic is: " + this.topic); 
 	}
@@ -136,6 +152,7 @@ public class SmartCar implements MqttCallback{
 			jsmessage.addProperty("ReceiverId", "null");
 			jsmessage.addProperty("Message", "WhereAmI");
 			jsmessage.addProperty("Location", this.mylocation);
+			jsmessage.addProperty("Type",  this.type);
 			
 			/* Create a Mqtt message */
 			MqttMessage mes = new MqttMessage();
@@ -212,8 +229,7 @@ public class SmartCar implements MqttCallback{
 					/* Where I Am */
 					case "000":
 						String new_topic = js.get("Topic").getAsString();
-						this.topic = new_topic; 
-						this.needUpdate = true; 
+						this.topic = new_topic;  
 						break;
 				}
 				break;

@@ -21,6 +21,7 @@ public class SmartCity implements MqttCallback{
     private String cityTopic; 
     
     /* Lists */
+    private ArrayList<SpecialVehicle> specialVechicleList; 
     private ArrayList<SmartRoad> SmartRoadList;
     private ArrayList<String> TopicList; 
     
@@ -34,6 +35,7 @@ public class SmartCity implements MqttCallback{
         this.name = name; 
         this.cityTopic = name + "/";
         
+        this.specialVechicleList = new ArrayList<>(); 
         this.SmartRoadList = new ArrayList<>();
         this.TopicList = new ArrayList<>();
         this.TopicList.add(name+"/road");
@@ -79,6 +81,10 @@ public class SmartCity implements MqttCallback{
 		/* The city does not listen in this topic,only stores the name */
 		this.TopicList.add(this.name+"/road/"+road.getName()); 
 		// road.setSmartCity(this);
+	}
+	
+	public void addSpecialVehicle(SpecialVehicle speveh){
+		this.specialVechicleList.add(speveh); 
 	}
 	
 	/**
@@ -135,7 +141,7 @@ public class SmartCity implements MqttCallback{
 			theme = code.substring(0,1); // Y 
 			requestCode = code.substring(1,4); // XXX
 		}catch(Exception e){
-			System.err.println(this.id + "Error al leer el mensaje JSON");
+			System.err.println(this.id + ": Error al leer el mensaje JSON");
 			return; // Exit method 
 		}
 		
@@ -147,8 +153,14 @@ public class SmartCity implements MqttCallback{
 				/* Where I am? */
 				case "000":
 					try{
+						/* If it is an special vehicle, add to the city */
 						String loc = js.get("Location").getAsString();
 						String senderId = js.get("SenderId").getAsString();
+						String type = js.get("Type").getAsString(); 
+						if(!type.equals("0")){
+							this.addSpecialVehicle(new SpecialVehicle(senderId, type, loc));
+						}
+						/* Answer */
 						String[] args = {senderId, "", loc};
 						new CityAnswerRequest(this, "1000", args).start();
 					}catch(Exception e){
@@ -162,8 +174,27 @@ public class SmartCity implements MqttCallback{
 		case "2":
 			switch(requestCode){
 				/* S.O.S */
-				case "000":
-					System.err.println(this.id + ": SOS received"); 
+				case "000": 
+					String emergency_location = js.get("Location").getAsString(); 
+					/* The city should ask the the nearest ambulance to calculate this */
+					SpecialVehicle ambulance = null; 
+					
+					/* Search one ambulance */
+					for (SpecialVehicle s : this.specialVechicleList){
+						/* Ambulance */
+						if((!s.isOnMision()) && (s.getType().equals("1"))){
+							ambulance = s; 
+							break; 
+						}
+					}
+					/* We do not have any ambulance avaible */
+					if(ambulance == null){
+						/* Implementar una cola de emergencias */
+					}else{
+						/* Calculate best route between the ambulance and the emergency */
+						ArrayList<String> route = this.calculateBestRoute(ambulance.getLocation(),emergency_location);
+						/**/
+					}
 					break;
 			}/* end Switch */
 			break; 
@@ -201,6 +232,43 @@ public class SmartCity implements MqttCallback{
 		return null; 
 	}
 	
+	/**
+	 * It calculates the best route between two points 
+	 * @param loc1
+	 * @param loc2
+	 * @return
+	 */
+	private ArrayList<String> calculateBestRoute(String loc1, String loc2){
+		ArrayList<String> route = new ArrayList<>();
+		/* add first location */
+		route.add(loc1); 
+		/* String to int */
+		int loc1_x = Integer.valueOf(loc1.substring(0,1));
+		int loc1_y = Integer.valueOf(loc1.substring(1,2)); 
+		int loc2_x = Integer.valueOf(loc2.substring(0,1));
+		int loc2_y = Integer.valueOf(loc2.substring(1,2)); 
+		
+		/* Calculate route */
+		while(loc1_x != loc2_x){
+			if(loc1_x > loc2_x){
+				loc1_x--; 
+			}else{
+				loc1_x++;
+			}
+			route.add(String.valueOf(loc1_x) + String.valueOf(loc1_y));
+		}
+		
+		while(loc1_y != loc2_y){
+			if(loc1_y > loc2_y){
+				loc1_y--;
+			}else{
+				loc1_y++; 
+			}
+			route.add(String.valueOf(loc1_x) + String.valueOf(loc1_y));
+		}
+		
+		return route; 
+	}
 	/* ------------  end SmartCity route Methods ------------ */ 
 
 }/* end Class */

@@ -22,7 +22,7 @@ public class EnvironmentOne {
 		SmartRoad road_E = new SmartRoad("R-004", "E", "4", valencia);; 
 		
 		/* New car*/
-		SmartCar ambulance = new SmartCar("V-000", "00"); 
+		SmartCar ambulance = new SmartCar("V-000","00", "1"); 
 		SmartCar car_1 = new SmartCar("V-001", "43");
 		
 		
