@@ -1,4 +1,4 @@
-package smartcity;
+package smartcar;
 
 /**
  * Special class to store the important vehicles for the city. r

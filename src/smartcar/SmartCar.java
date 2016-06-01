@@ -25,7 +25,7 @@ public class SmartCar implements MqttCallback{
     public SmartCar(String id, String location){
         /* Initialization */
     	this.id = id;  
-    	this.type = "0"; 
+    	this.type = "normal"; 
     	/* SOLUCIONAR: this should be set by asking */
         this.topic = "valencia";
         
@@ -48,8 +48,9 @@ public class SmartCar implements MqttCallback{
         /* Initialization */
     	this.id = id;  
     	this.type = type;  
-    	/* SOLUCIONAR: this should be set by asking */
-        this.topic = "valencia";
+    	
+    	/* Special vehicles have a special channel  */
+        this.topic = "valencia" + "/" + this.type;
         
         this.mylocation = location;  
         
@@ -57,12 +58,11 @@ public class SmartCar implements MqttCallback{
         this.connect();
         this.subscribe();
         
+        /* New special vehicle to the city */
+        this.notifyCity(); 
+        
         /* Confirm Configuration */
         System.out.println(this.id + " configured!");
-        
-        /* Where Am I? */
-        System.out.println(this.id + ": Looking for a new topic...");
-        this.WhereAmI();
     }
     
     /* Getters and Setters */
@@ -166,7 +166,36 @@ public class SmartCar implements MqttCallback{
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * This method comunicates to the city that there is a new special 
+	 * vehicle 
+	 */
+	public void notifyCity(){
+		try{
+			/* Create the message in JSON Format */
+			JsonObject jsmessage = new JsonObject();
+			jsmessage.addProperty("Code", "4000");
+			jsmessage.addProperty("SenderId", this.id);
+			jsmessage.addProperty("ReceiverId", "null");
+			jsmessage.addProperty("Message", "new special vehicle");
+			jsmessage.addProperty("Location", this.mylocation);
+			jsmessage.addProperty("Type",  this.type);
+			
+			/* Create a Mqtt message */
+			MqttMessage mes = new MqttMessage();
+			mes.setPayload((jsmessage.toString()).getBytes());
+			
+			/* Push the message */
+			this.client.publish(this.topic, mes);
+			
+		}catch(Exception e){
+			System.err.println(this.id + " SmartCar/WhereIAm: ERROR");
+			e.printStackTrace();
+		}
+	}
+		
+	
 	/**
      * It sends a call of S.O.S 
      */

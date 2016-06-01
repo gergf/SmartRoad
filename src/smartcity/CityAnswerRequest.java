@@ -46,6 +46,10 @@ public class CityAnswerRequest extends Thread
 		case "1000":
 			answer1000(args[0], args[2]);
 			break;
+			
+		case "3000":
+			
+			break; 
 		}
 		
 		/* finish thread */
@@ -92,5 +96,32 @@ public class CityAnswerRequest extends Thread
 			e.printStackTrace(); 
 		} 
 	}/* end answer1000 */
+	
+	/**
+	 * This method sends a new Quest to a Special Vehicle 
+	 * @param receiverId
+	 * @param message
+	 */
+	private void sendQuest(String receiverId, String message){
+		try{
+			/* Create the message in JSON Format */
+			JsonObject jsmessage = new JsonObject();
+			jsmessage.addProperty("Code", "3000");
+			jsmessage.addProperty("SenderId", city.getId());
+			jsmessage.addProperty("ReceiverId", receiverId);
+			jsmessage.addProperty("Message", message);
+
+			/* Create a Mqtt message */
+			MqttMessage mes = new MqttMessage();
+			mes.setPayload((jsmessage.toString()).getBytes());
+			// Publish the message  
+			this.client.publish(city.getCityTopic(), mes);
+			
+		}catch(Exception e){
+			System.err.println(city.getId()+"-Thread:" + this.threadId + " AnswerRequest/answer1000 ERROR");
+			e.printStackTrace(); 
+		} 
+	}/* end answer1000 */
+	
 	
 }

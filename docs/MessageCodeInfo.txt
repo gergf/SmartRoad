@@ -8,12 +8,17 @@ The code is consists of four digits.
 ## CODE EXPLANATION - XYYY ##
 
 # 1st digit / THEME # 
+    # Request # 
     1: info-request
     2: emergency 
-    3: ...
+    3: quest
+    4: specialEvents
+
+    # Answer #
     5: info-answer
     6: emergency-answer
-    7: ...
+    7: quest-answer
+    8: specialEvents-answer 
 
 # 2nd-4th digits / REQUEST CODE #  
     1xxx:
@@ -25,7 +30,11 @@ The code is consists of four digits.
         ...
     
     3xxx:
+        000: Go to 
         ...
+    
+    4xxx:
+        000: new Special Vechicle 
 
     5xxx:
         000: Answer to Where I am?
@@ -34,3 +43,10 @@ The code is consists of four digits.
     6xxx:
         000: Answer (CHECK) to S.O.S
         001: Time until the help comes  
+        ...
+
+    7xxx: 
+        000: Check quest 
+
+    8xxx: 
+        000: Check new Special Vehicle 

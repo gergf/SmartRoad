@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import environment.SetUp;
+import smartcar.SpecialVehicle;
 import smartroad.SmartRoad;
 
 public class SmartCity implements MqttCallback{
@@ -27,7 +28,7 @@ public class SmartCity implements MqttCallback{
     private ArrayList<SmartRoad> SmartRoadList;
     private ArrayList<String> TopicList; 
     
-    /* Connection */
+    /* This client listens in the topic of the city  */
     private MqttClient client; 
     
     /* Constructor */
@@ -39,9 +40,11 @@ public class SmartCity implements MqttCallback{
         
         this.specialVechicleList = new ArrayList<>(); 
         this.SmartRoadList = new ArrayList<>();
+        
+        /* Prepare topic lists */
         this.TopicList = new ArrayList<>();
-        this.TopicList.add(name+"/road");
         this.TopicList.add(cityTopic);  
+        this.TopicList.add(name+"/ambulance");
         
         /* Connection */
         this.connect();
@@ -158,10 +161,8 @@ public class SmartCity implements MqttCallback{
 						/* If it is an special vehicle, add to the city */
 						String loc = js.get("Location").getAsString();
 						String senderId = js.get("SenderId").getAsString();
-						String type = js.get("Type").getAsString(); 
-						if(!type.equals("0")){
-							this.addSpecialVehicle(new SpecialVehicle(senderId, type, loc));
-						}
+						String type = js.get("Type").getAsString();
+						
 						/* Answer */
 						String[] args = {senderId, "", loc};
 						new CityAnswerRequest(this, "1000", args).start();
@@ -184,7 +185,7 @@ public class SmartCity implements MqttCallback{
 					/* Search one ambulance */
 					for (SpecialVehicle s : this.specialVechicleList){
 						/* Ambulance */
-						if((!s.isOnMision()) && (s.getType().equals("1"))){
+						if((!s.isOnMision()) && (s.getType().equals("ambulance"))){
 							ambulance = s; 
 							break; 
 						}
@@ -200,10 +201,27 @@ public class SmartCity implements MqttCallback{
 						for(String s : route)
 							System.out.print(s + "-");
 						System.out.println(); 
+						/* Send the quest to the ambulance */
+						String[] args = {ambulance.getId(), "Quest", ""};
+						new CityAnswerRequest(this, "3000", args).start();
+						
 					}
 					break;
 			}/* end Switch */
 			break; 
+		
+		/* Special Event */
+		case "4":
+			switch(requestCode){
+			/* new Special Vehicle */
+			case "000":
+				String id = js.get("SenderId").getAsString(); 
+				String location = js.get("Location").getAsString();
+				String type = js.get("Type").getAsString(); 
+				this.addSpecialVehicle(new SpecialVehicle(id, type, location));
+				break; 
+			}
+			break;
 			
 		/* Answers */
 		case "5":

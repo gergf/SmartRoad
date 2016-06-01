@@ -64,7 +64,7 @@ public class EnvironmentOne {
 		}
 		
 		/* New car*/
-		SmartCar ambulance = new SmartCar("V-000","00", "1"); 
+		SmartCar ambulance = new SmartCar("V-000","00", "ambulance"); 
 		SmartCar car_1 = new SmartCar("V-001", "43");
 		
 		
