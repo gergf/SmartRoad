@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -33,7 +35,7 @@ public class SmartCity implements MqttCallback{
     	/* Initialization */
         this.id = id; 
         this.name = name; 
-        this.cityTopic = name + "/";
+        this.cityTopic = name;
         
         this.specialVechicleList = new ArrayList<>(); 
         this.SmartRoadList = new ArrayList<>();
@@ -130,7 +132,7 @@ public class SmartCity implements MqttCallback{
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		// System.out.println(this.id + ": " + new String(message.getPayload()));
+		//System.err.println(this.id + ": " + new String(message.getPayload()));
 		String code, theme, requestCode;
 		JsonObject js; 
 		try{
@@ -194,6 +196,10 @@ public class SmartCity implements MqttCallback{
 						/* Calculate best route between the ambulance and the emergency */
 						ArrayList<String> route = this.calculateBestRoute(ambulance.getLocation(),emergency_location);
 						/**/
+						System.out.print("Route: -"); 
+						for(String s : route)
+							System.out.print(s + "-");
+						System.out.println(); 
 					}
 					break;
 			}/* end Switch */

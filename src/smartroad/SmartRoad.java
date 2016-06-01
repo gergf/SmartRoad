@@ -128,7 +128,6 @@ public class SmartRoad implements MqttCallback{
      */
     public void addSegment(Segment s){
         this.segmentsList.add(s); 
-        s.setTopic(this.topic + "/" + s.getName());
     }
     
     public void addSmartCar(SmartCar c){

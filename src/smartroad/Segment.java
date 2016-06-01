@@ -16,22 +16,23 @@ public class Segment implements MqttCallback {
 	/* Class attributes */
     private String id; 
     private SmartRoad myroad; 
-    private int ini; 
-    private int end; 
+    private String ini; 
+    private String end; 
     private String topic; 
-    private String name; 
+    private boolean open; 
     
     /* Connection */
     private MqttClient client; 
     
     /* Constructor */
-    public Segment(String id,String name, SmartRoad smartroad, int ini, int end){
+    public Segment(String id, SmartRoad smartroad, String ini, String end){
         /* Initialization */
     	this.id = id; 
-        this.name = name; 
         this.myroad = smartroad; 
+        this.topic = myroad.getTopic();
         this.ini = ini; 
         this.end = end; 
+        this.setOpen(true);
         
         /* Add myself to the road. The topic attribute should be 
          * filled by the SmartRoad */
@@ -42,13 +43,6 @@ public class Segment implements MqttCallback {
         this.subscribe();
     }
 
-    public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public String getId() {
         return id;
@@ -83,19 +77,19 @@ public class Segment implements MqttCallback {
         this.myroad = smartroad;
     }
 
-    public int getIni() {
+    public String getIni() {
         return ini;
     }
 
-    public void setIni(int ini) {
+    public void setIni(String ini) {
         this.ini = ini;
     }
 
-    public int getEnd() {
+    public String getEnd() {
         return end;
     }
 
-    public void setEnd(int end) {
+    public void setEnd(String end) {
         this.end = end;
     }
     
@@ -104,7 +98,7 @@ public class Segment implements MqttCallback {
     public void connect(){
 		try{
 			/* New client */
-    		this.client = new MqttClient(SetUp.BROKER_URL, this.name);
+    		this.client = new MqttClient(SetUp.BROKER_URL, this.id);
 			client.setCallback(this);
 			client.connect(); 
 		}catch(Exception e){
@@ -154,9 +148,15 @@ public class Segment implements MqttCallback {
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		System.out.println("I am " + this.name + " and I've listened this message:");
-		System.out.println(topic);
-		System.out.println(new String(message.getPayload()));
+	
+	}
+
+	public boolean isOpen() {
+		return open;
+	}
+
+	public void setOpen(boolean open) {
+		this.open = open;
 	}
 	
 	 /* end MqttInterface */
