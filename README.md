@@ -5,24 +5,22 @@ This project tries to simulate a SmartRoad environment based on IoT. It uses MQT
 
 ### Dependencies
 
-Mosquitto
-[http://mosquitto.org/](http://mosquitto.org/)
+###### Mosquitto [(link)](http://mosquitto.org/)
 Mosquitto is the broker I have chosen to this project. 
 Just becuase I was already familiar with it. 
 
-Paho Client 
-[https://eclipse.org/paho/](https://eclipse.org/paho/)
+ 
+###### Paho Client [(link)](https://eclipse.org/paho/)
 All the communication in this project uses the Java library of Paho 
 to communicate the several devices through Mqtt.  
 
-GSON 
-[https://github.com/google/gson](https://github.com/google/gson)
+
+###### GSON [(link)](https://github.com/google/gson)
 My favorite library to the JSON treatment. 
 
-Jackson 
-[https://github.com/FasterXML/jackson](https://github.com/FasterXML/jackson)
+
+###### Jackson [(link)](https://github.com/FasterXML/jackson)
 Jackson is used in this project to convert Java objects to JSON and vice versa. 
 
-### Updates 
+**Last update: 2/06/2016** 
 
-Last update: 2/06/2016
