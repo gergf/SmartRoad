@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import environment.SetUp;
+import event.Quest;
 import smartcar.SpecialVehicle;
 import smartroad.SmartRoad;
 
@@ -201,6 +202,9 @@ public class SmartCity implements MqttCallback{
 						for(String s : route)
 							System.out.print(s + "-");
 						System.out.println(); 
+						/* Create the quest */
+						String description = "Attend to a call of S.O.S by a normal car.";
+						Quest quest = new Quest(description, 2, route); 
 						/* Send the quest to the ambulance */
 						String[] args = {ambulance.getId(), "Quest", ""};
 						new CityAnswerRequest(this, "3000", args).start();
