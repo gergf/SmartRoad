@@ -252,6 +252,16 @@ public class SmartCar implements MqttCallback{
 			String requestCode = code.substring(1,4); // XXX
 			/* THEME */
 			switch(theme){
+			/* Quests */
+			case "3": 
+				/* Received Quest */
+				switch(requestCode){
+				case "000": 
+					System.out.println(this.id + ": I have received a new Quest");
+					break;
+				}
+				break;
+			
 			/* Answer Info */
 			case "5":
 				switch(requestCode){

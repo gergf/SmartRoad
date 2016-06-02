@@ -204,15 +204,24 @@ public class SmartCity implements MqttCallback{
 						System.out.println(); 
 						/* Create the quest */
 						String description = "Attend to a call of S.O.S by a normal car.";
-						Quest quest = new Quest(description, 2, route); 
+						Quest quest = new Quest(description, "ambulance" ,2, route); 
 						/* Send the quest to the ambulance */
 						String[] args = {ambulance.getId(), "Quest", ""};
-						new CityAnswerRequest(this, "3000", args).start();
+						new CityAnswerRequest(this, "3000", args, quest).start();
 						
 					}
 					break;
 			}/* end Switch */
-			break; 
+			break;
+			
+		/* Quests */
+		case "3": 
+			switch(requestCode){
+			case "000":
+				/* Nothing, there is no quest for the city */
+				break;
+			}
+			break;
 		
 		/* Special Event */
 		case "4":

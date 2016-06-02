@@ -14,6 +14,7 @@ import java.util.UUID;
 public class Quest {
 
 	private String id; 
+	private String topic; 
 	private String description; 
 	/* Priority level 
 	 * 1: Low 
@@ -24,9 +25,10 @@ public class Quest {
 	private ArrayList<String> route; 
 	private LocalDateTime date; 
 	
-	public Quest(String description, int priority, ArrayList<String> route){
+	public Quest(String description, String topic, int priority, ArrayList<String> route){
 		this.id = UUID.randomUUID().toString(); // Random ID for the quests
 		this.description = description; 
+		this.topic = topic; 
 		this.priority = priority; 
 		this.route = route; 
 		date = LocalDateTime.now(); 
@@ -34,6 +36,10 @@ public class Quest {
 	
 	public String getId() {
 		return this.id; 
+	}
+	
+	public String getTopic() {
+		return this.topic; 
 	}
 
 	public String getDescription() {
@@ -51,7 +57,4 @@ public class Quest {
 	public LocalDateTime getDate() {
 		return date;
 	}
-
-	
-	
 }

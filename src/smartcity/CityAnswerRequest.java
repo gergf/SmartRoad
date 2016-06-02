@@ -3,9 +3,12 @@ package smartcity;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.gson.JsonObject;
 
 import environment.SetUp;
+import event.Quest;
 import smartroad.SmartRoad;
 
 /*
@@ -25,7 +28,8 @@ public class CityAnswerRequest extends Thread
 	 */
 	private String[] args; 
 	private SmartCity city;
-	private String threadId; 
+	private String threadId;
+	private Quest quest; 
 	
 	/* Communication */
 	MqttClient client; 
@@ -38,6 +42,15 @@ public class CityAnswerRequest extends Thread
 		this.connect();
 	}
 	
+	public CityAnswerRequest(SmartCity city, String code, String[] args, Quest quest){
+		this.city = city; 
+		this.code = code; 
+		this.args = args; 
+		this.quest = quest; 
+		this.threadId = MqttClient.generateClientId();
+		this.connect();
+	}
+	
 	@Override
 	public void run() {
 		/* Identify the request */
@@ -46,11 +59,16 @@ public class CityAnswerRequest extends Thread
 		case "1000":
 			answer1000(args[0], args[2]);
 			break;
-			
+		
+		/* Send quest */
 		case "3000":
-			
+			if(this.quest != null)
+				this.sendQuest(args[0], this.quest);
+			else
+				System.err.println("CityAnswerRequest ERROR: Unable to send the Quest. Quest is null.");
 			break; 
-		}
+		
+		}/*end switch */
 		
 		/* finish thread */
 		return; 
@@ -102,20 +120,24 @@ public class CityAnswerRequest extends Thread
 	 * @param receiverId
 	 * @param message
 	 */
-	private void sendQuest(String receiverId, String message){
+	private void sendQuest(String receiverId, Quest quest){
 		try{
 			/* Create the message in JSON Format */
 			JsonObject jsmessage = new JsonObject();
 			jsmessage.addProperty("Code", "3000");
 			jsmessage.addProperty("SenderId", city.getId());
 			jsmessage.addProperty("ReceiverId", receiverId);
-			jsmessage.addProperty("Message", message);
+			/* Quest to JSON */
+			ObjectMapper mapper = new ObjectMapper();
+			String quest_string = mapper.writeValueAsString(quest);
+			jsmessage.addProperty("Quest", quest_string);
+			
 
 			/* Create a Mqtt message */
 			MqttMessage mes = new MqttMessage();
 			mes.setPayload((jsmessage.toString()).getBytes());
 			// Publish the message  
-			this.client.publish(city.getCityTopic(), mes);
+			this.client.publish(city.getCityTopic() + "/" + quest.getTopic(), mes);
 			
 		}catch(Exception e){
 			System.err.println(city.getId()+"-Thread:" + this.threadId + " AnswerRequest/answer1000 ERROR");

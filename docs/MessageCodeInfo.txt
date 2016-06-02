@@ -30,11 +30,11 @@ The code is consists of four digits.
         ...
     
     3xxx:
-        000: Go to 
+        000: Send quest 
         ...
     
     4xxx:
-        000: new Special Vechicle 
+        000: new Special Vechicle
 
     5xxx:
         000: Answer to Where I am?
@@ -49,4 +49,4 @@ The code is consists of four digits.
         000: Check quest 
 
     8xxx: 
-        000: Check new Special Vehicle 
+        000: Check new Special Vehicle
