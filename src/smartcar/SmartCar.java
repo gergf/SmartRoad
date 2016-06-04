@@ -47,7 +47,7 @@ public class SmartCar implements MqttCallback{
         this.WhereAmI();
     }
     
-    /* Constructor with type */
+    /* Constructor with type for Special Vehicles */
     public SmartCar(String id, String location, String type){
         /* Initialization */
     	this.id = id;  
@@ -226,7 +226,32 @@ public class SmartCar implements MqttCallback{
 			e.printStackTrace();
 		}
     }
-
+    
+    /**
+     * Notify the city that the quest has been completed
+     */
+    private void notifyCityQuestCompleted(Quest quest){
+    	try{
+			/* Create the message in JSON Format */
+			JsonObject jsmessage = new JsonObject();
+			jsmessage.addProperty("Code", "7000");
+			jsmessage.addProperty("SenderId", this.id);
+			jsmessage.addProperty("ReceiverId", "null");
+			jsmessage.addProperty("Message", "The quest (" + quest.getId() + ") has been completed.");
+			
+			/* Create a Mqtt message */
+			MqttMessage mes = new MqttMessage();
+			mes.setPayload((jsmessage.toString()).getBytes());
+			
+			/* Push the message */
+			this.client.publish(this.topic, mes);
+			
+		}catch(Exception e){
+			System.err.println(this.id + " SmartCar/notifyCityQuestCompleted: ERROR");
+			e.printStackTrace();
+		}
+    }
+    
     /* MqttCallback Interface */
     
 	@Override
@@ -312,7 +337,7 @@ public class SmartCar implements MqttCallback{
 		System.out.println(this.id + ": Going from " + route.get(0) + " to " + route.get(route.size()-1)); 
 		this.goTo(route);
 		/* Tell the city that the quest has been completed */
-		
+		this.notifyCityQuestCompleted(quest);
 	}
 	
 	/* Actions */

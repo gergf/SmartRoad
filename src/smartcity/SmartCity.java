@@ -244,6 +244,14 @@ public class SmartCity implements MqttCallback{
 				break;
 			}
 			break;
+		/* Quest */
+		case "7": 
+			switch(requestCode){
+			case "000":
+				// System.out.println(this.id + ": One quest has been completed");
+				break; 
+			}
+			break;
 		
 		/* Non-valid message (theme)*/
 		default:
