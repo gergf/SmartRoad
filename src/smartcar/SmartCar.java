@@ -11,7 +11,6 @@ import com.google.gson.JsonParser;
 
 import environment.SetUp;
 import event.Quest;
-import java.time.LocalDateTime; // Jackson needs this 
 import java.util.ArrayList;
 
 public class SmartCar implements MqttCallback{
@@ -63,7 +62,7 @@ public class SmartCar implements MqttCallback{
         this.subscribe();
         
         /* New special vehicle to the city */
-        this.notifyCity(); 
+        this.notifyCityNewSpecialVehicle(); 
         
         /* Confirm Configuration */
         System.out.println(this.id + " configured!");
@@ -175,7 +174,7 @@ public class SmartCar implements MqttCallback{
 	 * This method comunicates to the city that there is a new special 
 	 * vehicle 
 	 */
-	public void notifyCity(){
+	public void notifyCityNewSpecialVehicle(){
 		try{
 			/* Create the message in JSON Format */
 			JsonObject jsmessage = new JsonObject();
@@ -219,7 +218,7 @@ public class SmartCar implements MqttCallback{
 			
 			/* Push the message */
 			this.client.publish(this.topic, mes);
-			System.out.println(this.id + ": Call S.0.S sent."); 
+			System.out.println(this.id + ": Call S.0.S sent. My location is: " + this.mylocation); 
 			
 		}catch(Exception e){
 			System.err.println(this.id + " SmartCar/SOS: ERROR");
@@ -313,7 +312,6 @@ public class SmartCar implements MqttCallback{
 				switch(requestCode){
 					/* S.O.S call */
 					case "000":
-						System.out.println(this.id + ": I've received an answer for my SOS call. ");
 						break;
 				}
 				break;

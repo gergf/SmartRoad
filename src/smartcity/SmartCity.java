@@ -137,7 +137,7 @@ public class SmartCity implements MqttCallback{
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		//System.err.println(this.id + ": " + new String(message.getPayload()));
-		String code, theme, requestCode;
+		String code, theme, requestCode, id, location, type, senderId, description;
 		JsonObject js; 
 		try{
 			/* Extract request code */
@@ -160,12 +160,12 @@ public class SmartCity implements MqttCallback{
 				case "000":
 					try{
 						/* If it is an special vehicle, add to the city */
-						String loc = js.get("Location").getAsString();
-						String senderId = js.get("SenderId").getAsString();
-						String type = js.get("Type").getAsString();
+						 location = js.get("Location").getAsString();
+						 senderId = js.get("SenderId").getAsString();
+						 type = js.get("Type").getAsString();
 						
 						/* Answer */
-						String[] args = {senderId, "", loc};
+						String[] args = {senderId, "", location};
 						new CityAnswerRequest(this, "1000", args).start();
 					}catch(Exception e){
 						System.err.println(this.id + "messageArrived > Theme 1 > 000: ERROR"); 
@@ -197,13 +197,8 @@ public class SmartCity implements MqttCallback{
 					}else{
 						/* Calculate best route between the ambulance and the emergency */
 						ArrayList<String> route = this.calculateBestRoute(ambulance.getLocation(),emergency_location);
-						/**/
-						System.out.print("Route: -"); 
-						for(String s : route)
-							System.out.print(s + "-");
-						System.out.println(); 
 						/* Create the quest */
-						String description = "Attend to a call of S.O.S by a normal car.";
+						description = "Attend to a call of S.O.S by a normal car.";
 						Quest quest = new Quest(description, "ambulance" ,2, route); 
 						/* Send the quest to the ambulance */
 						String[] args = {ambulance.getId(), "Quest", ""};
@@ -228,9 +223,9 @@ public class SmartCity implements MqttCallback{
 			switch(requestCode){
 			/* new Special Vehicle */
 			case "000":
-				String id = js.get("SenderId").getAsString(); 
-				String location = js.get("Location").getAsString();
-				String type = js.get("Type").getAsString(); 
+				id = js.get("SenderId").getAsString(); 
+				location = js.get("Location").getAsString();
+				type = js.get("Type").getAsString(); 
 				this.addSpecialVehicle(new SpecialVehicle(id, type, location));
 				break; 
 			}
@@ -244,11 +239,17 @@ public class SmartCity implements MqttCallback{
 				break;
 			}
 			break;
-		/* Quest */
 		case "7": 
 			switch(requestCode){
+			/* Quest completed */
 			case "000":
 				// System.out.println(this.id + ": One quest has been completed");
+				/* Search the specialVehicle which has completed the quest */
+				id = js.get("SenderId").getAsString(); 
+				for (SpecialVehicle sv : this.specialVechicleList)
+					if(sv.getId().equals(id))
+						sv.setOnMision(false);
+				/* The vehicle is now available */
 				break; 
 			}
 			break;
@@ -279,6 +280,7 @@ public class SmartCity implements MqttCallback{
 	
 	/**
 	 * It calculates the best route between two points 
+	 * The map must be a matrix. Special cases are not considered. 
 	 * @param loc1
 	 * @param loc2
 	 * @return

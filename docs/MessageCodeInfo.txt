@@ -46,7 +46,7 @@ The code is consists of four digits.
         ...
 
     7xxx: 
-        000: Check quest 
+        000: Quest completed 
 
     8xxx: 
         000: Check new Special Vehicle
