@@ -5,10 +5,13 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import environment.SetUp;
+import event.Quest;
+import java.time.LocalDateTime; // Jackson needs this 
 
 public class SmartCar implements MqttCallback{
 
@@ -257,7 +260,12 @@ public class SmartCar implements MqttCallback{
 				/* Received Quest */
 				switch(requestCode){
 				case "000": 
-					System.out.println(this.id + ": I have received a new Quest");
+					System.out.println(this.id + ": I have received a new Quest.");
+					/* JSON to Quest */
+					ObjectMapper mapper = SetUp.getMapper();
+					String jsQuest = js.get("Quest").getAsString();
+					Quest quest = mapper.readValue(jsQuest, Quest.class);
+
 					break;
 				}
 				break;

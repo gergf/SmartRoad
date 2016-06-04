@@ -19,7 +19,7 @@ to communicate the several devices through Mqtt.
 My favorite library to the JSON treatment. 
 
 
-###### Jackson [(link)](https://github.com/FasterXML/jackson)
+###### Jackson [(link)](https://github.com/FasterXML/jackson-datatype-jsr310)
 Jackson is used in this project to convert Java objects to JSON and vice versa. 
 
 **Last update: 2/06/2016** 

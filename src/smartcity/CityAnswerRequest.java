@@ -128,7 +128,7 @@ public class CityAnswerRequest extends Thread
 			jsmessage.addProperty("SenderId", city.getId());
 			jsmessage.addProperty("ReceiverId", receiverId);
 			/* Quest to JSON */
-			ObjectMapper mapper = new ObjectMapper();
+			ObjectMapper mapper = SetUp.getMapper();
 			String quest_string = mapper.writeValueAsString(quest);
 			jsmessage.addProperty("Quest", quest_string);
 			

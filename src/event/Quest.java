@@ -34,6 +34,10 @@ public class Quest {
 		date = LocalDateTime.now(); 
 	}
 	
+	public Quest(){
+		/* Dummy constructor for Jackson */
+	}
+	
 	public String getId() {
 		return this.id; 
 	}
