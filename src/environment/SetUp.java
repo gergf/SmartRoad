@@ -22,7 +22,7 @@ public class SetUp {
 	
 	/* Jackson
 	 * Datatype module to make Jackson recognize Java 8 Date & Time API data types (JSR-310).
-	 * https://github.com/FasterXML/jackson-datatype-jsr310 */
+	 * It is recommended to use only one instance of ObjectMapper (performance stuff) */
 	public static ObjectMapper getMapper(){
 		if(mapper == null){
 			mapper = new ObjectMapper(); 

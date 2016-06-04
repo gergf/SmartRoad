@@ -12,6 +12,7 @@ import com.google.gson.JsonParser;
 import environment.SetUp;
 import event.Quest;
 import java.time.LocalDateTime; // Jackson needs this 
+import java.util.ArrayList;
 
 public class SmartCar implements MqttCallback{
 
@@ -265,7 +266,8 @@ public class SmartCar implements MqttCallback{
 					ObjectMapper mapper = SetUp.getMapper();
 					String jsQuest = js.get("Quest").getAsString();
 					Quest quest = mapper.readValue(jsQuest, Quest.class);
-
+					/* Do the quest (I should be available) */
+					this.doQuest(quest);
 					break;
 				}
 				break;
@@ -300,5 +302,36 @@ public class SmartCar implements MqttCallback{
 	}
     
     /* end MqttInterface */
-
+	
+	/* Quests, 
+	 * for now, all the quest are "go to somewhere to attend an event"  */
+	private void doQuest(Quest quest) {
+		/* Read the quest */
+		ArrayList<String> route = quest.getRoute();
+		/* Go to ... */
+		System.out.println(this.id + ": Going from " + route.get(0) + " to " + route.get(route.size()-1)); 
+		this.goTo(route);
+		/* Tell the city that the quest has been completed */
+		
+	}
+	
+	/* Actions */
+	private void goTo(ArrayList<String> route){
+		boolean arrived = false;
+		int index = 0;  
+		/* This simulates the time elapsed during the journey */
+		while(!arrived){
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} 
+			this.mylocation = route.get(index++); 
+			if(this.mylocation.equals(route.get(route.size() - 1))){
+				arrived = true; 
+			}
+			// System.out.println(this.id + ": I am at " + this.mylocation);
+		}
+		System.out.println(this.id + ": I have arrived to my destiny."); 
+	}
 }
