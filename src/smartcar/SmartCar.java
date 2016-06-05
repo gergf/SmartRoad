@@ -397,6 +397,7 @@ public class SmartCar implements MqttCallback{
 			
 			/* Notify the city my location */
 			this.notifyCityMyLocation(last, current, next); 
+			System.out.println("CAR LOCATION: " + current);
 		}
 		System.out.println(this.id + ": I have arrived to my destiny."); 
 	}

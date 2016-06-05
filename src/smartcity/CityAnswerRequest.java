@@ -63,6 +63,16 @@ public class CityAnswerRequest extends Thread
 				System.err.println("CityAnswerRequest ERROR: Unable to send the Quest. Quest is null.");
 			break; 
 		
+		/* Open segment */ 
+		case "3001":
+			this.openSegment(args[0], args[1], args[2], args[3]);
+			break;
+			
+		/* Close segment */
+		case "3002":
+			this.closeSegment(args[0], args[1], args[2], args[3]);
+			break;
+		
 		case "6002":
 			this.notifyEmergencyRequester(args[0], args[1], args[2]); 
 			break;
@@ -138,15 +148,22 @@ public class CityAnswerRequest extends Thread
 		} 
 	}/* end sendQuest */
 	
+	/**
+	 * 
+	 * @param receiverId
+	 * @param message
+	 * @param requesterId
+	 */
 	private void notifyEmergencyRequester(String receiverId, String message, String requesterId){
+		/* Create the message in JSON Format */
+		JsonObject jsmessage = SetUp.fillJSBody("6002", this.city.getId(), receiverId, message);
+		jsmessage.addProperty("RequesterId", requesterId);
+		
+		/* Create a Mqtt message */
+		MqttMessage mes = new MqttMessage();
+		mes.setPayload((jsmessage.toString()).getBytes());
+		
 		try{
-			/* Create the message in JSON Format */
-			JsonObject jsmessage = SetUp.fillJSBody("6002", this.city.getId(), receiverId, message);
-			jsmessage.addProperty("RequesterId", requesterId);
-			
-			/* Create a Mqtt message */
-			MqttMessage mes = new MqttMessage();
-			mes.setPayload((jsmessage.toString()).getBytes());
 			// Publish the message  
 			this.client.publish(this.city.getCityTopic() + "/road", mes);
 			
@@ -156,5 +173,49 @@ public class CityAnswerRequest extends Thread
 		} 
 	}
 	
+	/**
+	 * 
+	 * @param receiverId
+	 * @param roadName
+	 * @param ini
+	 * @param end
+	 */
+	private void openSegment(String receiverId, String roadName, String ini, String end){
+		JsonObject jsmessage = SetUp.fillJSBody("3001", this.city.getId(), receiverId, "Open the segment");
+		jsmessage.addProperty("SegmentIni", ini);
+		jsmessage.addProperty("SegmentEnd", end);
+		
+		MqttMessage mes = new MqttMessage(); 
+		mes.setPayload(jsmessage.toString().getBytes());
+		
+		try{
+			this.client.publish(this.city.getCityTopic() + "/road/" + roadName, mes);
+		}catch(Exception e){
+			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/openSegment ERROR");
+			e.printStackTrace();
+		}
+	}
 	
+	/**
+	 * 
+	 * @param receiverId
+	 * @param roadName
+	 * @param ini
+	 * @param end
+	 */
+	private void closeSegment(String receiverId, String roadName, String ini, String end){
+		JsonObject jsmessage = SetUp.fillJSBody("3002", this.city.getId(), receiverId, "Close the segment");
+		jsmessage.addProperty("SegmentIni", ini);
+		jsmessage.addProperty("SegmentEnd", end);
+		
+		MqttMessage mes = new MqttMessage(); 
+		mes.setPayload(jsmessage.toString().getBytes());
+		
+		try{
+			this.client.publish(this.city.getCityTopic() + "/road/" + roadName, mes);
+		}catch(Exception e){
+			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/closeSegment ERROR");
+			e.printStackTrace();
+		}
+	}
 }

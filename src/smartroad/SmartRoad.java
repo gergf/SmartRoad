@@ -204,6 +204,20 @@ public class SmartRoad implements MqttCallback{
 			}
 			break;
 		
+		case "3":
+			switch(requestCode){
+			/* Open segment */
+			case "001":
+				/* TODO: Open the segment */
+				break;
+				
+			/* Close segment */
+			case "002":
+				/* TODO: Close the segment */
+				break;
+			}
+			break;
+		
 		/* emergency answer */
 		case "6":
 			switch(requestCode){

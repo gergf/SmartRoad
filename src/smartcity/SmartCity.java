@@ -351,11 +351,15 @@ public class SmartCity implements MqttCallback{
 	private void openSegment(String ini, String end){
 		SmartRoad road = this.searchSegment(ini);
 		/* Code 3001 */
+		String[] args = {road.getId(), road.getName(), ini, end};
+		new CityAnswerRequest(this, "3001", args).start();
 	}
 	
 	private void closeSegment(String ini, String end){
 		SmartRoad road = this.searchSegment(ini);
 		/* Code 3002 */
+		String[] args = {road.getId(), road.getName(), ini, end};
+		new CityAnswerRequest(this, "3002", args).start();
 	}
 	
 	/***
@@ -366,7 +370,7 @@ public class SmartCity implements MqttCallback{
 	 * @return
 	 */
 	private SmartRoad searchSegment(String ini){
-		String rangeMap = ini.substring(1); 
+		String rangeMap = ini.substring(0,1);
 		for(SmartRoad road : this.smartRoadList){
 			if(rangeMap.equals(road.getRangeMap()))
 				return road;
