@@ -53,6 +53,8 @@ The code is consists of four digits.
 
     7xxx: 
         000: Quest completed 
+        001: Segment opened
+        002: Segment closed 
 
     8xxx: 
         000: Check new Special Vehicle

@@ -57,6 +57,15 @@ public class RoadAnswerRequest extends Thread {
 		case "6002":
 			this.notifyVehicleEmergencyAttended(args[0], args[1]); 
 			break;
+		
+		case "7001":
+			this.notifyCitySegmentOpened();
+			break;
+		
+		case "7002":
+			this.notifyCitySegmentClosed(); 
+			break;
+		
 		}
 	}
 	
@@ -121,12 +130,11 @@ public class RoadAnswerRequest extends Thread {
 	 * @param receiverId
 	 */
 	private void notifyVehicleEmergencyAttended(String message, String receiverId){
+		JsonObject js = SetUp.fillJSBody("6002", this.road.getId(), receiverId, message);
+		
+		MqttMessage mes = new MqttMessage(); 
+		mes.setPayload(js.toString().getBytes());
 		try{
-			JsonObject js = SetUp.fillJSBody("6002", this.road.getId(), receiverId, message);
-			
-			MqttMessage mes = new MqttMessage(); 
-			mes.setPayload(js.toString().getBytes());
-			
 			this.client.publish(road.getTopic(), mes);
 		}catch(Exception e){
 			System.err.println(road.getId() + ":Thread-" + this.threadId + "ERROR in notifyVehicleEmergencyAttended");
@@ -134,4 +142,37 @@ public class RoadAnswerRequest extends Thread {
 		}
 	}
 
+	/**
+	 * 
+	 */
+	private void notifyCitySegmentOpened(){
+		JsonObject js = SetUp.fillJSBody("7001", this.road.getId(), this.road.getMyCityId(), "Segment Opened");
+		
+		MqttMessage mes = new MqttMessage(); 
+		mes.setPayload(js.toString().getBytes());
+		
+		try{
+			this.client.publish(this.road.getTopicMyCity(), mes);
+		}catch(Exception e){
+			System.err.println(road.getId() + ":Thread-" + this.threadId + "ERROR in notifyCitySegmentOpened");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void notifyCitySegmentClosed(){
+		JsonObject js = SetUp.fillJSBody("7002", this.road.getId(), this.road.getMyCityId(), "Segment Closed");
+		
+		MqttMessage mes = new MqttMessage(); 
+		mes.setPayload(js.toString().getBytes());
+		
+		try{
+			this.client.publish(this.road.getTopicMyCity(), mes);
+		}catch(Exception e){
+			System.err.println(road.getId() + ":Thread-" + this.threadId + "ERROR in notifyCitySegmentClosed");
+			e.printStackTrace();
+		}
+	}
 }

@@ -280,6 +280,16 @@ public class SmartCity implements MqttCallback{
 				new CityAnswerRequest(this, "6002", args).start();
 				this.completeEmergency(quest.getEmergency().getEmergencyId()); 
 				break; 
+			
+			/* Segment opened */ 
+			case "001":
+				/* TODO: Link this with a future interface */
+				break;
+			
+			/* Segment closed */
+			case "002":
+				/* TODO: Link this with a future interface */
+				break;
 			}
 			break;
 		

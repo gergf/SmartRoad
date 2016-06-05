@@ -85,6 +85,10 @@ public class SmartRoad implements MqttCallback{
     public String getTopicMyCity(){
     	return this.mycity.getCityTopic();
     }
+    
+    public String getMyCityId(){
+    	return this.mycity.getId();
+    }
 
     /* Why? This is already done in the constructor */
     public void setSmartCity(SmartCity c){
@@ -213,7 +217,7 @@ public class SmartRoad implements MqttCallback{
 				end = js.get("SegmentEnd").getAsString(); 
 				this.openSegment(ini, end);
 				/* Communicate the city that the segment has been opened */
-				// TODO: Message to city 
+				new RoadAnswerRequest(this, "7001", null).start();
 				break;
 				
 			/* Close segment */
@@ -222,7 +226,7 @@ public class SmartRoad implements MqttCallback{
 				end = js.get("SegmentEnd").getAsString(); 
 				this.closeSegment(ini, end);
 				/* Communicate the city that the segment has been closed */
-				// TODO: Message to city 
+				new RoadAnswerRequest(this, "7002", null).start();
 				break;
 			}
 			break;
