@@ -149,11 +149,7 @@ public class SmartCar implements MqttCallback{
 	public void WhereAmI(){
 		try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Code", "1000");
-			jsmessage.addProperty("SenderId", this.id);
-			jsmessage.addProperty("ReceiverId", "null");
-			jsmessage.addProperty("Message", "WhereAmI");
+			JsonObject jsmessage = SetUp.fillJSBody("1000", this.id, "null", "WhereAmI");
 			jsmessage.addProperty("Location", this.mylocation);
 			jsmessage.addProperty("Type",  this.type);
 			
@@ -177,11 +173,7 @@ public class SmartCar implements MqttCallback{
 	public void notifyCityNewSpecialVehicle(){
 		try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Code", "4000");
-			jsmessage.addProperty("SenderId", this.id);
-			jsmessage.addProperty("ReceiverId", "null");
-			jsmessage.addProperty("Message", "new special vehicle");
+			JsonObject jsmessage = SetUp.fillJSBody("4000", this.id, "null", "New special vehicle");
 			jsmessage.addProperty("Location", this.mylocation);
 			jsmessage.addProperty("Type",  this.type);
 			
@@ -205,11 +197,7 @@ public class SmartCar implements MqttCallback{
     public void sendSOS(){
     	try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Code", "2000");
-			jsmessage.addProperty("SenderId", this.id);
-			jsmessage.addProperty("ReceiverId", "null");
-			jsmessage.addProperty("Message", "S.O.S");
+			JsonObject jsmessage = SetUp.fillJSBody("2000", this.id, "null", "S.O.S");
 			jsmessage.addProperty("Location", this.mylocation);
 			
 			/* Create a Mqtt message */
@@ -232,11 +220,8 @@ public class SmartCar implements MqttCallback{
     private void notifyCityQuestCompleted(Quest quest){
     	try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Code", "7000");
-			jsmessage.addProperty("SenderId", this.id);
-			jsmessage.addProperty("ReceiverId", "null");
-			jsmessage.addProperty("Message", "The quest (" + quest.getId() + ") has been completed.");
+			JsonObject jsmessage = SetUp.fillJSBody("7000", this.id, "null", 
+					"The quest (" + quest.getId() + ") has been completed.");
 			
 			ObjectMapper mapper = SetUp.getMapper(); 
 			String quest_string = mapper.writeValueAsString(quest);
@@ -360,7 +345,7 @@ public class SmartCar implements MqttCallback{
 		/* This simulates the time elapsed during the journey */
 		while(!arrived){
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 

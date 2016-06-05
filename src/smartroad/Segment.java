@@ -72,6 +72,10 @@ public class Segment implements MqttCallback {
 	public SmartRoad getSmartroad() {
         return myroad;
     }
+	
+	public boolean isOpen() {
+		return open;
+	}
 
     public void setSmartroad(SmartRoad smartroad) {
         this.myroad = smartroad;
@@ -93,6 +97,10 @@ public class Segment implements MqttCallback {
         this.end = end;
     }
     
+	public void setOpen(boolean open) {
+		this.open = open;
+	}
+	
     /* Methods */
     
     public void connect(){
@@ -148,15 +156,9 @@ public class Segment implements MqttCallback {
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
+		/* Awesome code here. 
+		 * For now the segments do not receive messages */
 	
-	}
-
-	public boolean isOpen() {
-		return open;
-	}
-
-	public void setOpen(boolean open) {
-		this.open = open;
 	}
 	
 	 /* end MqttInterface */
