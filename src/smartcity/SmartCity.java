@@ -188,7 +188,9 @@ public class SmartCity implements MqttCallback{
 					String last_location = js.get("LastLocation").getAsString();
 					String current_location = js.get("CurrentLocation").getAsString(); 
 					String next_location = js.get("NextLocation").getAsString(); 
-					System.out.println(last_location+"|"+current_location+"|"+next_location);
+					/* Open and close Segments */
+					this.openSegment(last_location, current_location); 
+					this.closeSegment(current_location, next_location); 
 					break;
 			}
 			break;
@@ -342,6 +344,34 @@ public class SmartCity implements MqttCallback{
 		}
 		
 		return route; 
+	}
+	
+	/* Close and Open segments of a route */
+	
+	private void openSegment(String ini, String end){
+		SmartRoad road = this.searchSegment(ini);
+		/* Code 3001 */
+	}
+	
+	private void closeSegment(String ini, String end){
+		SmartRoad road = this.searchSegment(ini);
+		/* Code 3002 */
+	}
+	
+	/***
+	 * It returns the road which contains that segment. 
+	 * I use the rangeMap to determine this. 
+	 * @param ini
+	 * @param end
+	 * @return
+	 */
+	private SmartRoad searchSegment(String ini){
+		String rangeMap = ini.substring(1); 
+		for(SmartRoad road : this.smartRoadList){
+			if(rangeMap.equals(road.getRangeMap()))
+				return road;
+		}
+		return null; 
 	}
 	/* ------------  end SmartCity route Methods ------------ */ 
 

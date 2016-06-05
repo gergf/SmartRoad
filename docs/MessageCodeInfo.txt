@@ -34,6 +34,8 @@ The code is consists of four digits.
     
     3xxx:
         000: Send quest 
+        001: Open Segment
+        002: Close Segment
         ...
     
     4xxx:

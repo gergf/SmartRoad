@@ -381,7 +381,7 @@ public class SmartCar implements MqttCallback{
 		/* This simulates the time elapsed during the journey */
 		while(!arrived){
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 
