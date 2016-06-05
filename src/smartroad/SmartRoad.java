@@ -205,15 +205,24 @@ public class SmartRoad implements MqttCallback{
 			break;
 		
 		case "3":
+			String ini, end; 
 			switch(requestCode){
 			/* Open segment */
 			case "001":
-				/* TODO: Open the segment */
+				ini = js.get("SegmentIni").getAsString();
+				end = js.get("SegmentEnd").getAsString(); 
+				this.openSegment(ini, end);
+				/* Communicate the city that the segment has been opened */
+				// TODO: Message to city 
 				break;
 				
 			/* Close segment */
 			case "002":
-				/* TODO: Close the segment */
+				ini = js.get("SegmentIni").getAsString();
+				end = js.get("SegmentEnd").getAsString(); 
+				this.closeSegment(ini, end);
+				/* Communicate the city that the segment has been closed */
+				// TODO: Message to city 
 				break;
 			}
 			break;
@@ -247,6 +256,24 @@ public class SmartRoad implements MqttCallback{
 	}/*endMethod*/
 	
 	 /* ------------ end MqttInterface ------------ */
+	
+	private void openSegment(String ini, String end){
+		for(Segment s : this.segmentsList){
+			if(s.getIni().equals(ini) && s.getEnd().equals(end)){
+				s.setOpen(true);
+				return;
+			}
+		}
+	}
+	
+	private void closeSegment(String ini, String end){
+		for(Segment s : this.segmentsList){
+			if(s.getIni().equals(ini) && s.getEnd().equals(end)){
+				s.setOpen(false);
+				return;
+			}
+		}
+	}
     
 	
 }
