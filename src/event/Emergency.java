@@ -14,6 +14,7 @@ public class Emergency {
 	private String location; 
 	private String priority; 
 	private boolean inProcess; 
+	private boolean completed; 
 	
 	public Emergency(String requesterId, String roadId, String cityId, String location,  String priority){
 		this.emergencyId = UUID.randomUUID().toString(); 
@@ -22,7 +23,8 @@ public class Emergency {
 		this.cityId = cityId; 
 		this.location = location;
 		this.priority = priority; 
-		this.inProcess = true; 
+		this.inProcess = false; 
+		this.completed = false; 
 	}
 	
 	public Emergency(){
@@ -55,6 +57,18 @@ public class Emergency {
 	
 	public boolean isInProcess() {
 		return inProcess; 
+	}
+	
+	public boolean isCompleted() {
+		return completed; 
+	}
+	
+	public void setCompleted(boolean completed) {
+		this.completed = completed; 
+	}
+	
+	public void setIsInProcess(boolean process){
+		this.inProcess = process; 
 	}
 	
 }

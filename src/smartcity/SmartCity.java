@@ -25,7 +25,7 @@ public class SmartCity implements MqttCallback{
     
     /* Lists */
     private ArrayList<SpecialVehicle> specialVechicleList;
-    private ArrayList<Emergency> emergencyList;
+    private ArrayList<Emergency> emergencyQueue;
     private ArrayList<SmartRoad> smartRoadList;
     private ArrayList<String> topicList; 
     
@@ -41,6 +41,7 @@ public class SmartCity implements MqttCallback{
         
         this.specialVechicleList = new ArrayList<>(); 
         this.smartRoadList = new ArrayList<>();
+        this.emergencyQueue = new ArrayList<>();
         
         /* Prepare topic lists */
         this.topicList = new ArrayList<>();
@@ -87,6 +88,18 @@ public class SmartCity implements MqttCallback{
 		/* The city does not listen in this topic,only stores the name */
 		this.topicList.add(this.name+"/road/"+road.getName()); 
 		// road.setSmartCity(this);
+	}
+	
+	public void addEmergencyToQueue(Emergency e){
+		this.emergencyQueue.add(e); 
+	}
+	
+	public void completeEmergency(String emergencyId){
+		for(Emergency em : this.emergencyQueue)
+			if(em.getEmergencyId().equals(emergencyId)){
+				em.setCompleted(true);
+				break;
+			}
 	}
 	
 	public void addSpecialVehicle(SpecialVehicle speveh){
@@ -175,7 +188,7 @@ public class SmartCity implements MqttCallback{
 			break;
 			
 		/* emergency */
-		case "2":
+		case "2": 
 			switch(requestCode){
 				/* S.O.S */
 				case "000": 
@@ -183,7 +196,7 @@ public class SmartCity implements MqttCallback{
 					String roadId = js.get("SenderId").getAsString(); 
 					String emergency_location = js.get("Location").getAsString(); 
 					/* Create the emergency */
-					Emergency emergency = new Emergency(requesterId, roadId, this.id, emergency_location , "SOS" ); 
+					Emergency emergency = new Emergency(requesterId, roadId, this.id, emergency_location , "SOS" );
 					/* The city should ask the the nearest ambulance to calculate this */
 					SpecialVehicle ambulance = null; 
 					
@@ -195,10 +208,7 @@ public class SmartCity implements MqttCallback{
 							break; 
 						}
 					}
-					/* We do not have any ambulance avaible */
-					if(ambulance == null){
-						/* TODO: Implementar una cola de emergencias */
-					}else{
+					if(ambulance != null){
 						/* Calculate best route between the ambulance and the emergency */
 						ArrayList<String> route = this.calculateBestRoute(ambulance.getLocation(),emergency.getLocation());
 						/* Create the quest */
@@ -207,8 +217,10 @@ public class SmartCity implements MqttCallback{
 						/* Send the quest to the ambulance */
 						String[] args = {ambulance.getId(), "Quest", ""};
 						new CityAnswerRequest(this, "3000", args, quest).start();
-						
+						emergency.setIsInProcess(true);
 					}
+					/* TODO: Las emergencias se deberian revisar cada x tiempo */
+					this.addEmergencyToQueue(emergency);
 					break;
 			}/* end Switch */
 			break;
@@ -252,11 +264,13 @@ public class SmartCity implements MqttCallback{
 				for (SpecialVehicle sv : this.specialVechicleList)
 					if(sv.getId().equals(id))
 						sv.setOnMision(false);
+				
 				/* Send a message to the initial requester */
 				Quest quest = SetUp.getMapper().readValue(js.get("Quest").getAsString(), Quest.class); 
 				/* Search road Name */
 				String[] args = {quest.getEmergency().getRoadId(), "Your emergency has been attended", quest.getEmergency().getRequesterId()};
 				new CityAnswerRequest(this, "6002", args).start();
+				this.completeEmergency(quest.getEmergency().getEmergencyId()); 
 				break; 
 			}
 			break;
