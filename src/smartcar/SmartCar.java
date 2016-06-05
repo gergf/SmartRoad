@@ -3,6 +3,7 @@ package smartcar;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +20,8 @@ public class SmartCar implements MqttCallback{
     private String id;
     private String topic;
     private String mylocation;
-    private String type; // 0: Civil, 1: Ambulance, 2: Police...  
+    private String type; // normal, ambulance, police...
+    private String current_city; 
     
     /* Communication */
     private MqttClient client; 
@@ -29,8 +31,9 @@ public class SmartCar implements MqttCallback{
         /* Initialization */
     	this.id = id;  
     	this.type = "normal"; 
-    	/* SOLUCIONAR: this should be set by asking */
-        this.topic = "valencia";
+    	/* TODO: this should be set by asking */
+        this.current_city = "valencia";
+    	this.topic = this.current_city;
         
         this.mylocation = location;  
         
@@ -53,7 +56,8 @@ public class SmartCar implements MqttCallback{
     	this.type = type;  
     	
     	/* Special vehicles have a special channel  */
-        this.topic = "valencia" + "/" + this.type;
+    	this.current_city = "valencia"; 
+        this.topic = current_city + "/" + this.type;
         
         this.mylocation = location;  
         
@@ -218,11 +222,11 @@ public class SmartCar implements MqttCallback{
      * Notify the city that the quest has been completed
      */
     private void notifyCityQuestCompleted(Quest quest){
-    	try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = SetUp.fillJSBody("7000", this.id, "null", 
-					"The quest (" + quest.getId() + ") has been completed.");
-			
+		JsonObject jsmessage = SetUp.fillJSBody("7000", this.id, "null", 
+				"The quest (" + quest.getId() + ") has been completed.");
+		
+		try{	
 			ObjectMapper mapper = SetUp.getMapper(); 
 			String quest_string = mapper.writeValueAsString(quest);
 			jsmessage.addProperty("Quest", quest_string);
@@ -236,6 +240,37 @@ public class SmartCar implements MqttCallback{
 			
 		}catch(Exception e){
 			System.err.println(this.id + " SmartCar/notifyCityQuestCompleted: ERROR");
+			e.printStackTrace();
+		}
+    }
+    
+    /***
+     * This method is for Special Vehicles. Where the topic is cityName/type
+     * and the city needs to know where will be the car to handle the segments. 
+     * @param last
+     * @param current
+     * @param next
+     */
+    private void notifyCityMyLocation(String last, String current, String next){
+    	/* Send message to the city to handle the segments in my route */
+    	JsonObject jsmessage = SetUp.fillJSBody("1100", this.id, "null", "My location (last, current and next)");
+    	jsmessage.addProperty("LastLocation", last);
+    	jsmessage.addProperty("CurrentLocation", current);
+    	jsmessage.addProperty("NextLocation", next);
+    	
+    	/* Create Mqtt message */
+    	MqttMessage mes = new MqttMessage(); 
+    	mes.setPayload(jsmessage.toString().getBytes());
+    	
+    	/* Push the message */
+    	try {
+    		/* TODO: Estudia mejor esta forma de mandar mensajes */
+			MqttClient auxClient = new MqttClient(SetUp.BROKER_URL, MqttClient.generateClientId());
+			auxClient.connect();
+			auxClient.publish(this.topic, mes);
+			auxClient.disconnect();
+		} catch (MqttException e) {
+			System.err.println(this.id + ": SmartCar/notifyCityMyLocation ERROR"); 
 			e.printStackTrace();
 		}
     }
@@ -342,6 +377,7 @@ public class SmartCar implements MqttCallback{
 	private void goTo(ArrayList<String> route){
 		boolean arrived = false;
 		int index = 0;  
+		String last, current, next; /* Location to notify the city */
 		/* This simulates the time elapsed during the journey */
 		while(!arrived){
 			try {
@@ -349,12 +385,27 @@ public class SmartCar implements MqttCallback{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 
+			last = this.mylocation; 
 			this.mylocation = route.get(index++); 
+			current = this.mylocation; 
 			if(this.mylocation.equals(route.get(route.size() - 1))){
 				arrived = true; 
+				next = current; /* TODO: Mirar esto. Como se finaliza la ruta.  */
+			}else{
+				next = route.get(index);
 			}
-			// System.out.println(this.id + ": I am at " + this.mylocation);
+			
+			/* Notify the city my location */
+			this.notifyCityMyLocation(last, current, next); 
 		}
 		System.out.println(this.id + ": I have arrived to my destiny."); 
+	}
+	
+	/* Actions Car */
+	/**
+	 * This methods moves the car to a random location inside the map. 
+	 */
+	private void moveTo(){
+		/* TODO: Maybe in JADE...  */
 	}
 }

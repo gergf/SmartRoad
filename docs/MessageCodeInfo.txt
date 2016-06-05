@@ -22,7 +22,10 @@ The code is consists of four digits.
 
 # 2nd-4th digits / REQUEST CODE #  
     1xxx:
+        /* Normal Car */
         000: Where I am? 
+        /* Special vehicles */
+        100: My location. (last, current and next)
         ...
     
     2xxx:

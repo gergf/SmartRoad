@@ -150,11 +150,11 @@ public class SmartCity implements MqttCallback{
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		//System.err.println(this.id + ": " + new String(message.getPayload()));
-		String code, theme, requestCode, id, location, type, senderId, description;
+		String code, theme, requestCode, id, location, type, senderId, description, text;
 		JsonObject js; 
 		try{
 			/* Extract request code */
-			String text = new String(message.getPayload()); 
+			text = new String(message.getPayload()); 
 			js = new JsonParser().parse(text).getAsJsonObject();
 			code = js.get("Code").getAsString(); // Y XXX
 			theme = code.substring(0,1); // Y 
@@ -183,6 +183,12 @@ public class SmartCity implements MqttCallback{
 					}catch(Exception e){
 						System.err.println(this.id + "messageArrived > Theme 1 > 000: ERROR"); 
 					} 
+					break;
+				case "100":
+					String last_location = js.get("LastLocation").getAsString();
+					String current_location = js.get("CurrentLocation").getAsString(); 
+					String next_location = js.get("NextLocation").getAsString(); 
+					System.out.println(last_location+"|"+current_location+"|"+next_location);
 					break;
 			}
 			break;
