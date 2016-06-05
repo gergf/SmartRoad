@@ -21,12 +21,7 @@ public class CityAnswerRequest extends Thread
 {
 	/* Data */
 	private String code; 
-	/* Values in args
-	 * 0: ReceiverId
-	 * 1: Message 
-	 * 2: Location
-	 */
-	private String[] args; 
+	private String[] args; // It depends of the call 
 	private SmartCity city;
 	private String threadId;
 	private Quest quest; 
@@ -67,6 +62,10 @@ public class CityAnswerRequest extends Thread
 			else
 				System.err.println("CityAnswerRequest ERROR: Unable to send the Quest. Quest is null.");
 			break; 
+		
+		case "7001":
+			this.notifyEmergencyRequester(args[0], args[1], args[2]); 
+			break;
 		
 		}/*end switch */
 		
@@ -110,7 +109,7 @@ public class CityAnswerRequest extends Thread
 			this.client.publish(city.getCityTopic(), mes);
 			
 		}catch(Exception e){
-			System.err.println(city.getId()+"-Thread:" + this.threadId + " AnswerRequest/answer1000 ERROR");
+			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/answer1000 ERROR");
 			e.printStackTrace(); 
 		} 
 	}/* end answer1000 */
@@ -131,8 +130,6 @@ public class CityAnswerRequest extends Thread
 			ObjectMapper mapper = SetUp.getMapper();
 			String quest_string = mapper.writeValueAsString(quest);
 			jsmessage.addProperty("Quest", quest_string);
-			
-
 			/* Create a Mqtt message */
 			MqttMessage mes = new MqttMessage();
 			mes.setPayload((jsmessage.toString()).getBytes());
@@ -140,10 +137,32 @@ public class CityAnswerRequest extends Thread
 			this.client.publish(city.getCityTopic() + "/" + quest.getTopic(), mes);
 			
 		}catch(Exception e){
-			System.err.println(city.getId()+"-Thread:" + this.threadId + " AnswerRequest/answer1000 ERROR");
+			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/sendQuest ERROR");
 			e.printStackTrace(); 
 		} 
-	}/* end answer1000 */
+	}/* end sendQuest */
+	
+	private void notifyEmergencyRequester(String requesterId, String message, String roadTopic){
+		try{
+			/* Create the message in JSON Format */
+			JsonObject jsmessage = new JsonObject();
+			jsmessage.addProperty("Code", "7001");
+			jsmessage.addProperty("SenderId", city.getId());
+			jsmessage.addProperty("ReceiverId", requesterId);
+			jsmessage.addProperty("Message", message);
+			
+
+			/* Create a Mqtt message */
+			MqttMessage mes = new MqttMessage();
+			mes.setPayload((jsmessage.toString()).getBytes());
+			// Publish the message  
+			this.client.publish(roadTopic, mes);
+			
+		}catch(Exception e){
+			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/notifyEmergencyRequester ERROR");
+			e.printStackTrace(); 
+		} 
+	}
 	
 	
 }

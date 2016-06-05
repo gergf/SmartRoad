@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import environment.SetUp;
+import event.Emergency;
 import event.Quest;
 import smartcar.SpecialVehicle;
 import smartroad.SmartRoad;
@@ -179,7 +178,11 @@ public class SmartCity implements MqttCallback{
 			switch(requestCode){
 				/* S.O.S */
 				case "000": 
+					String requesterId = js.get("RequesterId").getAsString(); 
+					String roadId = js.get("SenderId").getAsString(); 
 					String emergency_location = js.get("Location").getAsString(); 
+					/* Create the emergency */
+					Emergency emergency = new Emergency(requesterId, roadId, this.id, emergency_location , "SOS" ); 
 					/* The city should ask the the nearest ambulance to calculate this */
 					SpecialVehicle ambulance = null; 
 					
@@ -193,13 +196,13 @@ public class SmartCity implements MqttCallback{
 					}
 					/* We do not have any ambulance avaible */
 					if(ambulance == null){
-						/* Implementar una cola de emergencias */
+						/* TODO: Implementar una cola de emergencias */
 					}else{
 						/* Calculate best route between the ambulance and the emergency */
-						ArrayList<String> route = this.calculateBestRoute(ambulance.getLocation(),emergency_location);
+						ArrayList<String> route = this.calculateBestRoute(ambulance.getLocation(),emergency.getLocation());
 						/* Create the quest */
-						description = "Attend to a call of S.O.S by a normal car.";
-						Quest quest = new Quest(description, "ambulance" ,2, route); 
+						description = "Attend to a call of S.O.S by a normal car."; 
+						Quest quest = new Quest(description, "ambulance" ,2, route, emergency); 
 						/* Send the quest to the ambulance */
 						String[] args = {ambulance.getId(), "Quest", ""};
 						new CityAnswerRequest(this, "3000", args, quest).start();
@@ -243,13 +246,23 @@ public class SmartCity implements MqttCallback{
 			switch(requestCode){
 			/* Quest completed */
 			case "000":
-				// System.out.println(this.id + ": One quest has been completed");
 				/* Search the specialVehicle which has completed the quest */
 				id = js.get("SenderId").getAsString(); 
 				for (SpecialVehicle sv : this.specialVechicleList)
 					if(sv.getId().equals(id))
 						sv.setOnMision(false);
-				/* The vehicle is now available */
+				/* Send a message to the initial requester */
+				Quest quest = SetUp.getMapper().readValue(js.get("Quest").getAsString(), Quest.class); 
+				/* Search road Name */
+				String roadId = quest.getEmergency().getRoadId(); 
+				String roadTopic = ""; 
+				for(SmartRoad r : this.SmartRoadList)
+					if(r.getId().equals(roadId)){
+						roadTopic = r.getTopic(); 
+						break;
+					}
+				String[] args = {quest.getEmergency().getRequesterId(), "Your emergency is now satisfied", roadTopic};
+				new CityAnswerRequest(this, "7001", args).start();
 				break; 
 			}
 			break;

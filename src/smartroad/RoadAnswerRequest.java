@@ -17,17 +17,10 @@ public class RoadAnswerRequest extends Thread {
 	
 	/* Data */
 	private String code; 
-	/* Values in args
-	 * 0: ReceiverId
-	 * 1: Message 
-	 * 2: Location
-	 * 3: Flag Code - En el caso de que en una contestacion se deban 
-	 * enviar varios mensajes, para distinguir que mensaje se quiere enviar.
-	 */
-	private String[] args; 
+	private String[] args; // It depends of the call  
 	private SmartRoad road;
 	private String threadId; 
-	private String flag; 
+	private String flag;
 	
 	/* Communication */
 	MqttClient client; 
@@ -52,7 +45,11 @@ public class RoadAnswerRequest extends Thread {
 				break;
 			/* Send the emergency to the city */
 			case "1": 
-				this.communicate2000toCity(args[0], args[1], args[2]);
+				if(args.length < 5){
+					System.err.println("RoadAnswerRequest ERROR: Args is not completed. Code 2000 with flag 1");
+				}else{
+					this.communicate2000toCity(args[0], args[1], args[2], args[4]);
+				}
 				break;
 			}
 			break;
@@ -95,10 +92,14 @@ public class RoadAnswerRequest extends Thread {
 		}
 	}
 	
-	/**
+	/***
 	 * It send a message to the city communicating the emergency. 
+	 * @param receiverId
+	 * @param message
+	 * @param location
+	 * @param requesterId
 	 */
-	private void communicate2000toCity(String receiverId, String message, String location){
+	private void communicate2000toCity(String receiverId, String message, String location, String requesterId){
 		try{
 			JsonObject js = new JsonObject(); 
 			js.addProperty("Code", "2000");
@@ -106,6 +107,7 @@ public class RoadAnswerRequest extends Thread {
 			js.addProperty("ReceiverId",  receiverId); 
 			js.addProperty("Message", message);
 			js.addProperty("Location",  location);
+			js.addProperty("RequesterId", requesterId);
 			
 			MqttMessage mes = new MqttMessage(); 
 			mes.setPayload(js.toString().getBytes());

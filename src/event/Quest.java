@@ -13,8 +13,8 @@ import java.util.UUID;
  */
 public class Quest {
 
-	private String id; 
-	private String topic; 
+	private String id; 			// ID of the quest 
+	private String topic; 		// Special vehicle topic 
 	private String description; 
 	/* Priority level 
 	 * 1: Low 
@@ -24,14 +24,17 @@ public class Quest {
 	private int priority; 
 	private ArrayList<String> route; 
 	private LocalDateTime date; 
+	private Emergency emergency;
 	
-	public Quest(String description, String topic, int priority, ArrayList<String> route){
+	public Quest(String description, String topic, int priority, ArrayList<String> route, Emergency emergency){
 		this.id = UUID.randomUUID().toString(); // Random ID for the quests
 		this.description = description; 
 		this.topic = topic; 
 		this.priority = priority; 
 		this.route = route; 
 		date = LocalDateTime.now(); 
+		this.emergency = emergency; 
+		
 	}
 	
 	public Quest(){
@@ -60,5 +63,9 @@ public class Quest {
 
 	public LocalDateTime getDate() {
 		return date;
+	}
+	
+	public Emergency getEmergency(){
+		return emergency; 
 	}
 }

@@ -187,6 +187,7 @@ public class SmartRoad implements MqttCallback{
 			switch(requestCode){
 				/* S.O.S. call */
 				case "000":
+					
 					/* To answer the car that its message has been received */
 					String senderId = js.get("SenderId").getAsString();
 					String[] args = {senderId, "Check S.O.S", "", "0"};
@@ -195,7 +196,8 @@ public class SmartRoad implements MqttCallback{
 					/* To communicate the city the emergency */
 					String location = js.get("Location").getAsString(); 
 					/* Si utilizas el mismo array the strings de arriba pasan cosas raras */
-					String[] args2 = {this.mycity.getId(), text, location, "1"};
+					String[] args2 = {this.mycity.getId(), text, location, "1", senderId};
+					
 					new RoadAnswerRequest(this, "2000", args2).start(); 
 					break;
 			}

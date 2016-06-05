@@ -1,6 +1,7 @@
 ### Synopsis 
 
-This project tries to simulate a SmartRoad environment based on IoT. It uses MQTT broker to handle the communication among the different objects, and PAHO as MQTT client. The structure of the messages has been builded using JSON format. 
+This project tries to simulate a SmartRoad environment based on IoT. It uses Mosquitto as broker to handle the communication among the different objects (devices), and PAHO as MQTT Java client. 
+The structure of the messages has been builded following the JSON format. 
 
 
 ### Dependencies
@@ -20,7 +21,8 @@ My favorite library to the JSON treatment.
 
 
 ###### Jackson [(link)](https://github.com/FasterXML/jackson-datatype-jsr310)
-Jackson is used in this project to convert Java objects to JSON and vice versa. 
+Jackson is used in this project to convert Java objects to JSON and vice versa. 	
+
 
 **Last update: 2/06/2016** 
 

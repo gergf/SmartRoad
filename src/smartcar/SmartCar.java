@@ -238,6 +238,10 @@ public class SmartCar implements MqttCallback{
 			jsmessage.addProperty("ReceiverId", "null");
 			jsmessage.addProperty("Message", "The quest (" + quest.getId() + ") has been completed.");
 			
+			ObjectMapper mapper = SetUp.getMapper(); 
+			String quest_string = mapper.writeValueAsString(quest);
+			jsmessage.addProperty("Quest", quest_string);
+			
 			/* Create a Mqtt message */
 			MqttMessage mes = new MqttMessage();
 			mes.setPayload((jsmessage.toString()).getBytes());
@@ -316,6 +320,14 @@ public class SmartCar implements MqttCallback{
 				}
 				break;
 			
+			case "7":
+				switch(requestCode){
+				case "001":
+					System.out.println(this.id + ": Now I am OK!");
+					break;
+				}
+				break;
+			
 			/* Non-valid message (theme)*/
 			default:
 				System.err.println(this.id + ": MessageArrivedERROR Non-valid theme. ");
@@ -345,7 +357,7 @@ public class SmartCar implements MqttCallback{
 		/* This simulates the time elapsed during the journey */
 		while(!arrived){
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 
