@@ -95,11 +95,7 @@ public class CityAnswerRequest extends Thread
 		
 		try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Code", "5000");
-			jsmessage.addProperty("SenderId", city.getId());
-			jsmessage.addProperty("ReceiverId", receiverId);
-			jsmessage.addProperty("Message", "CityAnswerRequest: Answer to WhereAmI");
+			JsonObject jsmessage = SetUp.fillJSBody("5000", this.city.getId(), receiverId, "CityAnswerRequest: Answer to WhereAmI");
 			
 			/*Add topic */
 			jsmessage.addProperty("Topic", road.getTopic());
@@ -124,14 +120,12 @@ public class CityAnswerRequest extends Thread
 	private void sendQuest(String receiverId, Quest quest){
 		try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Code", "3000");
-			jsmessage.addProperty("SenderId", city.getId());
-			jsmessage.addProperty("ReceiverId", receiverId);
+			JsonObject jsmessage = SetUp.fillJSBody("3000", this.city.getId(), receiverId, "Send Quest");
 			/* Quest to JSON */
 			ObjectMapper mapper = SetUp.getMapper();
 			String quest_string = mapper.writeValueAsString(quest);
 			jsmessage.addProperty("Quest", quest_string);
+			
 			/* Create a Mqtt message */
 			MqttMessage mes = new MqttMessage();
 			mes.setPayload((jsmessage.toString()).getBytes());
@@ -147,14 +141,9 @@ public class CityAnswerRequest extends Thread
 	private void notifyEmergencyRequester(String receiverId, String message, String requesterId){
 		try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Code", "6002");
-			jsmessage.addProperty("SenderId", city.getId());
-			jsmessage.addProperty("ReceiverId", receiverId);
-			jsmessage.addProperty("Message", message);
+			JsonObject jsmessage = SetUp.fillJSBody("6002", this.city.getId(), receiverId, message);
 			jsmessage.addProperty("RequesterId", requesterId);
 			
-
 			/* Create a Mqtt message */
 			MqttMessage mes = new MqttMessage();
 			mes.setPayload((jsmessage.toString()).getBytes());

@@ -3,6 +3,7 @@ package environment;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 
 /**
  * This class only contains static info. 
@@ -29,5 +30,21 @@ public class SetUp {
 			mapper.findAndRegisterModules();  
 		}
 		return mapper; 
+	}
+	
+	/***
+	 * 
+	 * @param senderId
+	 * @param receiverId
+	 * @param message
+	 * @return JsonObject with the basics fields filled
+	 */
+	public static JsonObject fillJSBody(String code, String senderId, String receiverId, String message){
+		JsonObject js = new JsonObject(); 
+		js.addProperty("Code", code);
+		js.addProperty("SenderId", senderId);
+		js.addProperty("ReceiverId", receiverId);
+		js.addProperty("Message", message);
+		return js; 
 	}
 }

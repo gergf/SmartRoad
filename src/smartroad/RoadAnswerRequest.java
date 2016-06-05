@@ -80,11 +80,7 @@ public class RoadAnswerRequest extends Thread {
 	 */
 	private void answer2000(String receiverId, String message ){
 		try{
-			JsonObject js = new JsonObject(); 
-			js.addProperty("Code" , "6000");
-			js.addProperty("SenderId", road.getId());
-			js.addProperty("ReceiverId",  receiverId);
-			js.addProperty("Message", message);
+			JsonObject js = SetUp.fillJSBody("6000", this.road.getId(), receiverId, message);
 			
 			MqttMessage mes = new MqttMessage(); 
 			mes.setPayload(js.toString().getBytes());
@@ -105,11 +101,7 @@ public class RoadAnswerRequest extends Thread {
 	 */
 	private void communicate2000toCity(String receiverId, String message, String location, String requesterId){
 		try{
-			JsonObject js = new JsonObject(); 
-			js.addProperty("Code", "2000");
-			js.addProperty("SenderId",  road.getId());
-			js.addProperty("ReceiverId",  receiverId); 
-			js.addProperty("Message", message);
+			JsonObject js = SetUp.fillJSBody("2000", this.road.getId(), receiverId, message);
 			js.addProperty("Location",  location);
 			js.addProperty("RequesterId", requesterId);
 			
@@ -130,11 +122,7 @@ public class RoadAnswerRequest extends Thread {
 	 */
 	private void notifyVehicleEmergencyAttended(String message, String receiverId){
 		try{
-			JsonObject js = new JsonObject(); 
-			js.addProperty("Code", "6002");
-			js.addProperty("SenderId",  road.getId());
-			js.addProperty("ReceiverId",  receiverId); 
-			js.addProperty("Message", message);
+			JsonObject js = SetUp.fillJSBody("6002", this.road.getId(), receiverId, message);
 			
 			MqttMessage mes = new MqttMessage(); 
 			mes.setPayload(js.toString().getBytes());
