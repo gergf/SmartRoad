@@ -317,13 +317,16 @@ public class SmartCar implements MqttCallback{
 					/* S.O.S call */
 					case "000":
 						break;
+					/* Emergency attended */
+					case "002":
+						System.out.println(this.id + ": Now I am OK!");
+						break;
 				}
 				break;
 			
 			case "7":
 				switch(requestCode){
 				case "001":
-					System.out.println(this.id + ": Now I am OK!");
 					break;
 				}
 				break;

@@ -104,6 +104,7 @@ public class SmartRoad implements MqttCallback{
     private void subscribe(){
     	try{
     		this.client.subscribe(this.topic);
+    		this.client.subscribe(this.getTopicMyCity() + "/road");
     	}catch(Exception e){
     		System.err.println(this.id + " SmartRoad/subscribe: Something wrong happend.");
     		System.err.println(e);
@@ -165,11 +166,11 @@ public class SmartRoad implements MqttCallback{
 	}
 
 	@Override
-	public void messageArrived(String topic, MqttMessage message) throws Exception {
+	public void messageArrived(String topic, MqttMessage mes) throws Exception {
 		/* Test */
 		// SetUp.testMessage(this.name, this.id, topic, message);
-		
-		String text = new String(message.getPayload()); 
+		String senderId, location, message, requesterId; 
+		String text = new String(mes.getPayload()); 
 		/* Extract request code */
 		JsonObject js = new JsonParser().parse(text).getAsJsonObject();
 		String code = js.get("Code").getAsString(); // Y XXX
@@ -189,12 +190,12 @@ public class SmartRoad implements MqttCallback{
 				case "000":
 					
 					/* To answer the car that its message has been received */
-					String senderId = js.get("SenderId").getAsString();
+					senderId = js.get("SenderId").getAsString();
 					String[] args = {senderId, "Check S.O.S", "", "0"};
 					new RoadAnswerRequest(this, "2000", args).start();
 					
 					/* To communicate the city the emergency */
-					String location = js.get("Location").getAsString(); 
+					location = js.get("Location").getAsString(); 
 					/* Si utilizas el mismo array the strings de arriba pasan cosas raras */
 					String[] args2 = {this.mycity.getId(), text, location, "1", senderId};
 					
@@ -205,8 +206,28 @@ public class SmartRoad implements MqttCallback{
 		
 		/* emergency answer */
 		case "6":
+			switch(requestCode){
+			/* Notify the vehicle */
+			case "002":
+				/* TODO: Comentar si se deberia mandar el mensaje por todas las carreteras o solo por la 
+				carretera donde estaba el requesterId */
+				if(js.get("ReceiverId").getAsString().equals(this.getId())){
+					message = js.get("Message").getAsString(); 
+					requesterId = js.get("RequesterId").getAsString(); // Now is the receiverId
+					String[] args = {message, requesterId};
+					new RoadAnswerRequest(this, "6002", args).start();
+				}
+				break;
+			}
 			break;
 		
+		/* */
+		case "7":
+			switch(requestCode){
+			case "001":
+				break;
+			}
+			break;
 		}/* endSwitch*/
 		
 	}/*endMethod*/

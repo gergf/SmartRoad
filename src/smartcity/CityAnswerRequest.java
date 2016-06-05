@@ -63,10 +63,12 @@ public class CityAnswerRequest extends Thread
 				System.err.println("CityAnswerRequest ERROR: Unable to send the Quest. Quest is null.");
 			break; 
 		
-		case "7001":
+		case "6002":
 			this.notifyEmergencyRequester(args[0], args[1], args[2]); 
 			break;
 		
+		default:
+			System.err.println("CityAnswerRequest ERROR: The code " + code + " is not handled. ");
 		}/*end switch */
 		
 		/* finish thread */
@@ -142,21 +144,22 @@ public class CityAnswerRequest extends Thread
 		} 
 	}/* end sendQuest */
 	
-	private void notifyEmergencyRequester(String requesterId, String message, String roadTopic){
+	private void notifyEmergencyRequester(String receiverId, String message, String requesterId){
 		try{
 			/* Create the message in JSON Format */
 			JsonObject jsmessage = new JsonObject();
-			jsmessage.addProperty("Code", "7001");
+			jsmessage.addProperty("Code", "6002");
 			jsmessage.addProperty("SenderId", city.getId());
-			jsmessage.addProperty("ReceiverId", requesterId);
+			jsmessage.addProperty("ReceiverId", receiverId);
 			jsmessage.addProperty("Message", message);
+			jsmessage.addProperty("RequesterId", requesterId);
 			
 
 			/* Create a Mqtt message */
 			MqttMessage mes = new MqttMessage();
 			mes.setPayload((jsmessage.toString()).getBytes());
 			// Publish the message  
-			this.client.publish(roadTopic, mes);
+			this.client.publish(this.city.getCityTopic() + "/road", mes);
 			
 		}catch(Exception e){
 			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/notifyEmergencyRequester ERROR");

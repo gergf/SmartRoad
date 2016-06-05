@@ -24,9 +24,10 @@ public class SmartCity implements MqttCallback{
     private String cityTopic; 
     
     /* Lists */
-    private ArrayList<SpecialVehicle> specialVechicleList; 
-    private ArrayList<SmartRoad> SmartRoadList;
-    private ArrayList<String> TopicList; 
+    private ArrayList<SpecialVehicle> specialVechicleList;
+    private ArrayList<Emergency> emergencyList;
+    private ArrayList<SmartRoad> smartRoadList;
+    private ArrayList<String> topicList; 
     
     /* This client listens in the topic of the city  */
     private MqttClient client; 
@@ -39,12 +40,12 @@ public class SmartCity implements MqttCallback{
         this.cityTopic = name;
         
         this.specialVechicleList = new ArrayList<>(); 
-        this.SmartRoadList = new ArrayList<>();
+        this.smartRoadList = new ArrayList<>();
         
         /* Prepare topic lists */
-        this.TopicList = new ArrayList<>();
-        this.TopicList.add(cityTopic);  
-        this.TopicList.add(name+"/ambulance");
+        this.topicList = new ArrayList<>();
+        this.topicList.add(cityTopic);  
+        this.topicList.add(name+"/ambulance");
         
         /* Connection */
         this.connect();
@@ -72,19 +73,19 @@ public class SmartCity implements MqttCallback{
 	}
 
 	public ArrayList<SmartRoad> getSmartRoadList() {
-		return SmartRoadList;
+		return smartRoadList;
 	}
 
 	public void setSmartRoadList(ArrayList<SmartRoad> smartRoadList) {
-		SmartRoadList = smartRoadList;
+		this.smartRoadList = smartRoadList;
 	}
         
     /* Methods */
 	public void addSmartRoad(SmartRoad road){
 		/* Check if the road is already inside?? */
-		this.SmartRoadList.add(road); 
+		this.smartRoadList.add(road); 
 		/* The city does not listen in this topic,only stores the name */
-		this.TopicList.add(this.name+"/road/"+road.getName()); 
+		this.topicList.add(this.name+"/road/"+road.getName()); 
 		// road.setSmartCity(this);
 	}
 	
@@ -97,7 +98,7 @@ public class SmartCity implements MqttCallback{
      */
     private void subscribe(){
     	try{
-    		for(String t : TopicList)
+    		for(String t : topicList)
     			this.client.subscribe(t);
     		
     		
@@ -254,15 +255,8 @@ public class SmartCity implements MqttCallback{
 				/* Send a message to the initial requester */
 				Quest quest = SetUp.getMapper().readValue(js.get("Quest").getAsString(), Quest.class); 
 				/* Search road Name */
-				String roadId = quest.getEmergency().getRoadId(); 
-				String roadTopic = ""; 
-				for(SmartRoad r : this.SmartRoadList)
-					if(r.getId().equals(roadId)){
-						roadTopic = r.getTopic(); 
-						break;
-					}
-				String[] args = {quest.getEmergency().getRequesterId(), "Your emergency is now satisfied", roadTopic};
-				new CityAnswerRequest(this, "7001", args).start();
+				String[] args = {quest.getEmergency().getRoadId(), "Your emergency has been attended", quest.getEmergency().getRequesterId()};
+				new CityAnswerRequest(this, "6002", args).start();
 				break; 
 			}
 			break;

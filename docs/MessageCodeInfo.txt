@@ -42,12 +42,12 @@ The code is consists of four digits.
 
     6xxx:
         000: Answer (CHECK) to S.O.S
-        001: Time until the help comes  
+        001: Time until the help comes
+        002: Emergency attended   
         ...
 
     7xxx: 
         000: Quest completed 
-        001: Notify requesterId
 
     8xxx: 
         000: Check new Special Vehicle

@@ -20,7 +20,6 @@ public class RoadAnswerRequest extends Thread {
 	private String[] args; // It depends of the call  
 	private SmartRoad road;
 	private String threadId; 
-	private String flag;
 	
 	/* Communication */
 	MqttClient client; 
@@ -29,7 +28,6 @@ public class RoadAnswerRequest extends Thread {
 		this.road = road; 
 		this.code = code; 
 		this.args = args; 
-		this.flag = args[3];
 		this.threadId = MqttClient.generateClientId();
 		this.connect();
 	}
@@ -37,8 +35,10 @@ public class RoadAnswerRequest extends Thread {
 	@Override
 	public void run(){
 		switch(this.code){
+		
+		/* args[3] must be a flag ]*/
 		case "2000": 
-			switch(this.flag){
+			switch(args[3]){
 			/* answer the request 2000 to check the SOS call */
 			case "0":	
 				this.answer2000(args[0], args[1]);
@@ -52,6 +52,10 @@ public class RoadAnswerRequest extends Thread {
 				}
 				break;
 			}
+			break;
+		
+		case "6002":
+			this.notifyVehicleEmergencyAttended(args[0], args[1]); 
 			break;
 		}
 	}
@@ -117,7 +121,29 @@ public class RoadAnswerRequest extends Thread {
 			System.err.println(road.getId() + ":Thread-" + this.threadId + "ERROR in communicato2000toCity");
 			e.printStackTrace();
 		}
-		
+	}
+	
+	/***
+	 * It notifies the vehicle which did an emergency call that the emergency has been attended. 
+	 * @param message
+	 * @param receiverId
+	 */
+	private void notifyVehicleEmergencyAttended(String message, String receiverId){
+		try{
+			JsonObject js = new JsonObject(); 
+			js.addProperty("Code", "6002");
+			js.addProperty("SenderId",  road.getId());
+			js.addProperty("ReceiverId",  receiverId); 
+			js.addProperty("Message", message);
+			
+			MqttMessage mes = new MqttMessage(); 
+			mes.setPayload(js.toString().getBytes());
+			
+			this.client.publish(road.getTopic(), mes);
+		}catch(Exception e){
+			System.err.println(road.getId() + ":Thread-" + this.threadId + "ERROR in notifyVehicleEmergencyAttended");
+			e.printStackTrace();
+		}
 	}
 
 }
