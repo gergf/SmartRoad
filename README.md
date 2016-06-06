@@ -24,5 +24,5 @@ My favorite library to the JSON treatment.
 Jackson is used in this project to convert Java objects to JSON and vice versa. 	
 
 
-**Last update: 06/06/2016** 
+**Last update: 07/06/2016** 
 

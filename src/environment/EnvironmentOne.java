@@ -74,6 +74,7 @@ public class EnvironmentOne {
 				
 			}
 		}
+		System.out.println("Segmentes and panels added");
 		
 		/* New car*/
 		SmartCar ambulance = new SmartCar("V-000","00", "ambulance"); 

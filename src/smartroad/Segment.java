@@ -35,7 +35,7 @@ public class Segment implements MqttCallback {
         this.topic = myroad.getTopic();
         this.ini = ini; 
         this.end = end; 
-        this.setOpen(true);
+        this.open = true; 
         panelList = new ArrayList<>(); 
         
         /* Add myself to the road. The topic attribute should be 
@@ -104,7 +104,11 @@ public class Segment implements MqttCallback {
 	public void setOpen(boolean open) {
 		this.open = open;
 		if(open == false){
-			/* If close, send message by Panels */
+			for(Panel p : this.panelList)
+				p.showSegmentCloseText();
+		}else{
+			for(Panel p : this.panelList)
+				p.backToStadarText();
 		}
 	}
 	

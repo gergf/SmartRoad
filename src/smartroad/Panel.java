@@ -14,6 +14,7 @@ public class Panel implements IPanel{
     private Segment segment; /* What it belongs */
     private boolean enabled; /* Enabled = true Disabled = false */
     private String text;
+    private String standarText; 
     
     /**
      * This constructor creates a Panel with no set up. 
@@ -25,7 +26,7 @@ public class Panel implements IPanel{
         this.segment = seg; 
         this.enabled = false;
         this.text = "Circule con precaucion"; 
-        
+        this.standarText = this.text;
         /* Add the panel to the segment */
         seg.addPanel(this);
     }
@@ -42,6 +43,7 @@ public class Panel implements IPanel{
         this.segment = seg; 
         this.enabled = enabled;
         this.text = text; 
+        this.standarText = this.text;
     }
     
     /* Getters */
@@ -73,7 +75,15 @@ public class Panel implements IPanel{
     
     @Override
     public void setText(String newText){
-    	this.text = newText; 
+    	this.text = this.standarText = newText; 
+    }
+    
+    public void showSegmentCloseText(){
+    	this.text = "The segment has been closed";
+    }
+    
+    public void backToStadarText(){
+    	this.text = this.standarText;
     }
     
     /* Methods */
