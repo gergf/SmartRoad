@@ -9,7 +9,7 @@ public interface IPanel {
      * This method returns the ID of the Panel. 
      * @return id
      */
-    public int getId();
+    public String getId();
     
     /**
      * This method returns segment which it belongs. 
@@ -31,4 +31,15 @@ public interface IPanel {
      */
     public boolean getStatus(); 
     
+    /**
+     * 
+     * @param newStatus
+     */
+    public void setStatus(boolean newStatus);
+    
+    /**
+     * 
+     * @param newText
+     */
+    public void setText(String newText); 
 }

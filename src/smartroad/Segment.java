@@ -1,6 +1,8 @@
 
 package smartroad;
 
+import java.util.ArrayList;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -20,6 +22,7 @@ public class Segment implements MqttCallback {
     private String end; 
     private String topic; 
     private boolean open; 
+    private ArrayList<Panel> panelList; 
     
     /* Connection */
     private MqttClient client; 
@@ -33,6 +36,7 @@ public class Segment implements MqttCallback {
         this.ini = ini; 
         this.end = end; 
         this.setOpen(true);
+        panelList = new ArrayList<>(); 
         
         /* Add myself to the road. The topic attribute should be 
          * filled by the SmartRoad */
@@ -99,6 +103,13 @@ public class Segment implements MqttCallback {
     
 	public void setOpen(boolean open) {
 		this.open = open;
+		if(open == false){
+			/* If close, send message by Panels */
+		}
+	}
+	
+	public void addPanel(Panel p){
+		this.panelList.add(p); 
 	}
 	
     /* Methods */

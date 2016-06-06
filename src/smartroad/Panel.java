@@ -1,6 +1,8 @@
 
 package smartroad;
 
+import java.util.UUID;
+
 import smartroad.Interfaces.IPanel;
 
 /**
@@ -8,9 +10,9 @@ import smartroad.Interfaces.IPanel;
  */
 public class Panel implements IPanel{
 
-    private int id; 
+    private String id; 
     private Segment segment; /* What it belongs */
-    private boolean status; /* Enabled = true Disabled = false */
+    private boolean enabled; /* Enabled = true Disabled = false */
     private String text;
     
     /**
@@ -18,11 +20,14 @@ public class Panel implements IPanel{
      * @param id
      * @param seg 
      */
-    public Panel(int id, Segment seg){
-        this.id = id; 
+    public Panel(Segment seg){
+        this.id = UUID.randomUUID().toString(); 
         this.segment = seg; 
-        this.status = false;
-        this.text = ""; 
+        this.enabled = false;
+        this.text = "Circule con precaucion"; 
+        
+        /* Add the panel to the segment */
+        seg.addPanel(this);
     }
     
     /**
@@ -32,16 +37,16 @@ public class Panel implements IPanel{
      * @param enabled
      * @param text 
      */
-    public Panel(int id, Segment seg, boolean enabled, String text){
+    public Panel(String id, Segment seg, boolean enabled, String text){
         this.id = id; 
         this.segment = seg; 
-        this.status = enabled;
+        this.enabled = enabled;
         this.text = text; 
     }
     
     /* Getters */
     @Override
-    public int getId() {
+    public String getId() {
         return this.id; 
     }
     
@@ -57,16 +62,18 @@ public class Panel implements IPanel{
     
     @Override
     public boolean getStatus() {
-        return this.status; 
+        return this.enabled; 
     }
     
     /* Setters */
+    @Override 
+    public void setStatus(boolean enabled){
+        this.enabled = enabled; 
+    }
     
-    /**
-     * It changes the status of the Panel to the opposite one. 
-     */
-    public void setStatus(){
-        this.status = !this.status; 
+    @Override
+    public void setText(String newText){
+    	this.text = newText; 
     }
     
     /* Methods */

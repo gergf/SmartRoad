@@ -2,6 +2,7 @@ package environment;
 
 import smartcar.SmartCar;
 import smartcity.SmartCity;
+import smartroad.Panel;
 import smartroad.Segment;
 import smartroad.SmartRoad;
 
@@ -28,6 +29,7 @@ public class EnvironmentOne {
 		
 		/* Create Segments */
 		Segment s; 
+		Panel p;	// El panel se anyade autom. al segmento 
 		String id1, id2, ini, up, right;  
 		int count = 0; 
 		for(int i = 0; i < columns; i++){
@@ -40,23 +42,33 @@ public class EnvironmentOne {
 				switch(i){
 				case 0:
 					s = new Segment(id1, road_A, ini, up);
+					p = new Panel(s);
 					s = new Segment(id2, road_A, ini, right);
+					p = new Panel(s);
 					break;
 				case 1: 
 					s = new Segment(id1, road_B, ini, up);
+					p = new Panel(s);
 					s = new Segment(id2, road_B, ini, right);
+					p = new Panel(s);
 					break;
 				case 2: 
 					s = new Segment(id1, road_C, ini, up);
+					p = new Panel(s);
 					s = new Segment(id2, road_C, ini, right);
+					p = new Panel(s);
 					break;
 				case 3: 
 					s = new Segment(id1, road_D, ini, up);
+					p = new Panel(s);
 					s = new Segment(id2, road_D, ini, right);
+					p = new Panel(s);
 					break;
 				case 4:
 					s = new Segment(id1, road_E, ini, up);
+					p = new Panel(s);
 					s = new Segment(id2, road_E, ini, right);
+					p = new Panel(s);
 					break;
 				}
 				
