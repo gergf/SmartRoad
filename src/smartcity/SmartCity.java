@@ -184,6 +184,8 @@ public class SmartCity implements MqttCallback{
 						System.err.println(this.id + "messageArrived > Theme 1 > 000: ERROR"); 
 					} 
 					break;
+					
+				/* Location SpecialVehicle */
 				case "100":
 					String last_location = js.get("LastLocation").getAsString();
 					String current_location = js.get("CurrentLocation").getAsString(); 
@@ -361,15 +363,23 @@ public class SmartCity implements MqttCallback{
 	private void openSegment(String ini, String end){
 		SmartRoad road = this.searchSegment(ini);
 		/* Code 3001 */
-		String[] args = {road.getId(), road.getName(), ini, end};
-		new CityAnswerRequest(this, "3001", args).start();
+		if(road != null){
+			String[] args = {road.getId(), road.getName(), ini, end};
+			new CityAnswerRequest(this, "3001", args).start();
+		}else{
+			System.err.println(this.id + ": SmartCity/openSegment ERROR: Road is null ");
+		}
 	}
 	
 	private void closeSegment(String ini, String end){
 		SmartRoad road = this.searchSegment(ini);
 		/* Code 3002 */
-		String[] args = {road.getId(), road.getName(), ini, end};
-		new CityAnswerRequest(this, "3002", args).start();
+		if(road != null){
+			String[] args = {road.getId(), road.getName(), ini, end};
+			new CityAnswerRequest(this, "3002", args).start();
+		}else{
+			System.err.println(this.id + ": SmartCity/closeSegment ERROR: Road is null ");
+		}
 	}
 	
 	/***

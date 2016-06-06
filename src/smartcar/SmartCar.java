@@ -267,7 +267,7 @@ public class SmartCar implements MqttCallback{
     		/* TODO: Estudia mejor esta forma de mandar mensajes */
 			MqttClient auxClient = new MqttClient(SetUp.BROKER_URL, MqttClient.generateClientId());
 			auxClient.connect();
-			auxClient.publish(this.topic, mes);
+			auxClient.publish(this.topic, mes); // TOPIC: SpecialVehicle ambulance...
 			auxClient.disconnect();
 		} catch (MqttException e) {
 			System.err.println(this.id + ": SmartCar/notifyCityMyLocation ERROR"); 
