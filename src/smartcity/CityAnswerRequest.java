@@ -189,7 +189,7 @@ public class CityAnswerRequest extends Thread
 		mes.setPayload(jsmessage.toString().getBytes());
 		
 		try{
-			this.client.publish(this.city.getCityTopic() + "/road/" + roadName, mes);
+			this.client.publish(this.city.getCityTopic() + "/road" , mes);
 		}catch(Exception e){
 			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/openSegment ERROR");
 			e.printStackTrace();
@@ -212,7 +212,7 @@ public class CityAnswerRequest extends Thread
 		mes.setPayload(jsmessage.toString().getBytes());
 		
 		try{
-			this.client.publish(this.city.getCityTopic() + "/road/" + roadName, mes);
+			this.client.publish(this.city.getCityTopic() + "/road", mes);
 		}catch(Exception e){
 			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/closeSegment ERROR");
 			e.printStackTrace();

@@ -9,18 +9,20 @@ The code is consists of four digits.
 
 # 1st digit / THEME # 
     # Request # 
-    1: info-request
-    2: emergency 
-    3: quest
-    4: specialEvents
+    1: Info
+    2: Emergency 
+    3: Quest-Orders
+    4: SpecialEvents
 
     # Answer #
-    5: info-answer
-    6: emergency-answer
-    7: quest-answer
-    8: specialEvents-answer 
+    5: Info
+    6: Emergency
+    7: Quest-Orders
+    8: SpecialEvents 
 
 # 2nd-4th digits / REQUEST CODE #  
+    ## REQUESTS  ##
+
     1xxx:
         /* Normal Car */
         000: Where I am? 
@@ -41,6 +43,8 @@ The code is consists of four digits.
     4xxx:
         000: new Special Vechicle
 
+    ## ANSWERS ##
+
     5xxx:
         000: Answer to Where I am?
         ...
@@ -48,7 +52,7 @@ The code is consists of four digits.
     6xxx:
         000: Answer (CHECK) to S.O.S
         001: Time until the help comes
-        002: Emergency attended   
+        002: Emergency attended ( An emergency can contain several quests...)
         ...
 
     7xxx: 

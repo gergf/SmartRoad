@@ -23,6 +23,7 @@ public class EnvironmentOne {
 		
 		/* New city */
 		SmartCity valencia = new SmartCity("C-000", "valencia");
+		
 		/* New road */
 		SmartRoad road_A = new SmartRoad("R-000", "A", "0", valencia);
 		SmartRoad road_B = new SmartRoad("R-001", "B", "1", valencia);

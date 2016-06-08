@@ -108,6 +108,7 @@ public class SmartRoad implements MqttCallback{
     private void subscribe(){
     	try{
     		this.client.subscribe(this.topic);
+    		/* Maybe this should be a class variable */
     		this.client.subscribe(this.getTopicMyCity() + "/road");
     	}catch(Exception e){
     		System.err.println(this.id + " SmartRoad/subscribe: Something wrong happend.");
@@ -210,24 +211,29 @@ public class SmartRoad implements MqttCallback{
 		
 		case "3":
 			String ini, end; 
-			switch(requestCode){
-			/* Open segment */
-			case "001":
-				ini = js.get("SegmentIni").getAsString();
-				end = js.get("SegmentEnd").getAsString(); 
-				this.openSegment(ini, end);
-				/* Communicate the city that the segment has been opened */
-				new RoadAnswerRequest(this, "7001", null).start();
-				break;
-				
-			/* Close segment */
-			case "002":
-				ini = js.get("SegmentIni").getAsString();
-				end = js.get("SegmentEnd").getAsString(); 
-				this.closeSegment(ini, end);
-				/* Communicate the city that the segment has been closed */
-				new RoadAnswerRequest(this, "7002", null).start();
-				break;
+			String receiverId = js.get("ReceiverId").getAsString(); 
+			/* The code 3 represents specific orders, so if the road is not the receiver, 
+			 * it must ignore the message */
+			if(receiverId.equals(this.id)){
+				switch(requestCode){
+				/* Open segment */
+				case "001":
+					ini = js.get("SegmentIni").getAsString();
+					end = js.get("SegmentEnd").getAsString(); 
+					this.openSegment(ini, end);
+					/* Communicate the city that the segment has been opened */
+					new RoadAnswerRequest(this, "7001", null).start();
+					break;
+					
+				/* Close segment */
+				case "002":
+					ini = js.get("SegmentIni").getAsString();
+					end = js.get("SegmentEnd").getAsString(); 
+					this.closeSegment(ini, end);
+					/* Communicate the city that the segment has been closed */
+					new RoadAnswerRequest(this, "7002", null).start();
+					break;
+				}
 			}
 			break;
 		

@@ -152,7 +152,7 @@ public class RoadAnswerRequest extends Thread {
 		mes.setPayload(js.toString().getBytes());
 		
 		try{
-			this.client.publish(this.road.getTopicMyCity(), mes);
+			this.client.publish(this.road.getTopicMyCity() + "/road", mes);
 		}catch(Exception e){
 			System.err.println(road.getId() + ":Thread-" + this.threadId + "ERROR in notifyCitySegmentOpened");
 			e.printStackTrace();
@@ -169,7 +169,7 @@ public class RoadAnswerRequest extends Thread {
 		mes.setPayload(js.toString().getBytes());
 		
 		try{
-			this.client.publish(this.road.getTopicMyCity(), mes);
+			this.client.publish(this.road.getTopicMyCity() + "/road", mes);
 		}catch(Exception e){
 			System.err.println(road.getId() + ":Thread-" + this.threadId + "ERROR in notifyCitySegmentClosed");
 			e.printStackTrace();

@@ -47,6 +47,7 @@ public class SmartCity implements MqttCallback{
         this.topicList = new ArrayList<>();
         this.topicList.add(cityTopic);  
         this.topicList.add(name+"/ambulance");
+        this.topicList.add(name+"/road");
         
         /* Connection */
         this.connect();
@@ -83,11 +84,11 @@ public class SmartCity implements MqttCallback{
         
     /* Methods */
 	public void addSmartRoad(SmartRoad road){
-		/* Check if the road is already inside?? */
-		this.smartRoadList.add(road); 
+		/* Check if the road is already inside?? (Connection lost) */
+		if(!this.smartRoadList.contains(road))
+			this.smartRoadList.add(road); 
 		/* The city does not listen in this topic,only stores the name */
 		this.topicList.add(this.name+"/road/"+road.getName()); 
-		// road.setSmartCity(this);
 	}
 	
 	public void addEmergencyToQueue(Emergency e){
@@ -265,6 +266,11 @@ public class SmartCity implements MqttCallback{
 				break;
 			}
 			break;
+		
+		case "6":
+			/* The city do not handle any message of this theme (for now) */
+			break; 
+			
 		case "7": 
 			switch(requestCode){
 			/* Quest completed */
