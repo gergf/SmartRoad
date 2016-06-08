@@ -379,6 +379,10 @@ public class SmartCity implements MqttCallback{
 	}
 	
 	private void closeSegment(String ini, String end){
+		/* If the location is the same, there is no reason to close that segment. */
+		if(ini.equals(end))
+			return; 
+		
 		SmartRoad road = this.searchSegment(ini);
 		/* Code 3002 */
 		if(road != null){
