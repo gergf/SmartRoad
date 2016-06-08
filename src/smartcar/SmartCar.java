@@ -177,7 +177,7 @@ public class SmartCar implements MqttCallback{
 	public void notifyCityNewSpecialVehicle(){
 		try{
 			/* Create the message in JSON Format */
-			JsonObject jsmessage = SetUp.fillJSBody("4000", this.id, "null", "New special vehicle");
+			JsonObject jsmessage = SetUp.fillJSBody("4000", this.id, "C-000", "New special vehicle");
 			jsmessage.addProperty("Location", this.mylocation);
 			jsmessage.addProperty("Type",  this.type);
 			
@@ -223,7 +223,7 @@ public class SmartCar implements MqttCallback{
      */
     private void notifyCityQuestCompleted(Quest quest){
 			/* Create the message in JSON Format */
-		JsonObject jsmessage = SetUp.fillJSBody("7000", this.id, "null", 
+		JsonObject jsmessage = SetUp.fillJSBody("7000", this.id, "C-000", 
 				"The quest (" + quest.getId() + ") has been completed.");
 		
 		try{	
@@ -253,7 +253,7 @@ public class SmartCar implements MqttCallback{
      */
     private void notifyCityMyLocation(String last, String current, String next){
     	/* Send message to the city to handle the segments in my route */
-    	JsonObject jsmessage = SetUp.fillJSBody("1100", this.id, "null", "My location (last, current and next)");
+    	JsonObject jsmessage = SetUp.fillJSBody("1100", this.id, "C-000", "My location (last, current and next)");
     	jsmessage.addProperty("LastLocation", last);
     	jsmessage.addProperty("CurrentLocation", current);
     	jsmessage.addProperty("NextLocation", next);
@@ -347,6 +347,17 @@ public class SmartCar implements MqttCallback{
 			case "7":
 				switch(requestCode){
 				case "001":
+					break;
+				}
+				break;
+			
+			case "8":
+				switch(requestCode){
+				/* The city has listened my message 4000 */
+				case "000": 
+					if(js.get("ReceiverId").getAsString().equals(this.id)){
+						/* Nothing to do here (for now) */ 
+					}
 					break;
 				}
 				break;

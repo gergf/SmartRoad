@@ -150,7 +150,6 @@ public class SmartCity implements MqttCallback{
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		//System.err.println(this.id + ": " + new String(message.getPayload()));
 		String code, theme, requestCode, id, location, type, senderId, description, text;
 		JsonObject js; 
 		try{
@@ -167,7 +166,7 @@ public class SmartCity implements MqttCallback{
 		
 		/* The message has been read successfully */
 		switch(theme){
-		/* info */
+		/* Info */
 		case "1":
 			switch(requestCode){
 				/* Where I am? */
@@ -198,7 +197,7 @@ public class SmartCity implements MqttCallback{
 			}
 			break;
 			
-		/* emergency */
+		/* Emergency */
 		case "2": 
 			switch(requestCode){
 				/* S.O.S */
@@ -250,25 +249,23 @@ public class SmartCity implements MqttCallback{
 			switch(requestCode){
 			/* new Special Vehicle */
 			case "000":
-				id = js.get("SenderId").getAsString(); 
+				senderId = js.get("SenderId").getAsString(); 
 				location = js.get("Location").getAsString();
 				type = js.get("Type").getAsString(); 
-				this.addSpecialVehicle(new SpecialVehicle(id, type, location));
+				this.addSpecialVehicle(new SpecialVehicle(senderId, type, location));
+				String[] args = {senderId, "You have been added to Special Vehicles of " + this.name + " city."};
+				new CityAnswerRequest(this, "8000", args).start();
 				break; 
 			}
 			break;
 			
 		/* Answers */
 		case "5":
-			switch(requestCode){
-			case "000":
-				/* Nothing, this is an answer to Where Am I? */
-				break;
-			}
+			/* Nothing for now */
 			break;
 		
 		case "6":
-			/* The city do not handle any message of this theme (for now) */
+			/* Nothing for now  */
 			break; 
 			
 		case "7": 
@@ -299,6 +296,10 @@ public class SmartCity implements MqttCallback{
 				/* TODO: Link this with a future interface */
 				break;
 			}
+			break;
+		
+		case "8":
+			/* Nothing for now */
 			break;
 		
 		/* Non-valid message (theme)*/

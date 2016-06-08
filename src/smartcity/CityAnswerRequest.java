@@ -73,8 +73,14 @@ public class CityAnswerRequest extends Thread
 			this.closeSegment(args[0], args[1], args[2], args[3]);
 			break;
 		
+		/* The emergency has been completed. Notify the requester */
 		case "6002":
 			this.notifyEmergencyRequester(args[0], args[1], args[2]); 
+			break;
+		
+		/* Answer to new Special Vehicle */
+		case "8000":
+			this.checkNewSpecialVehicle(args[0], args[1]); 
 			break;
 		
 		default:
@@ -123,14 +129,35 @@ public class CityAnswerRequest extends Thread
 	}/* end answer1000 */
 	
 	/**
+	 * It notifies the new Special Vehicle that its request has been listened. 
+	 * @param receiverId
+	 * @param message
+	 */
+	private void checkNewSpecialVehicle(String receiverId, String message){
+		String senderId = this.city.getId(); 
+		JsonObject jsmessage = SetUp.fillJSBody("8000", senderId, receiverId, message);
+		
+		MqttMessage mes = new MqttMessage(); 
+		mes.setPayload(jsmessage.toString().getBytes());
+		
+		try{
+			this.client.publish(this.city.getCityTopic() + "/ambulance", mes);
+		}catch(Exception e){
+			System.err.println(city.getId()+"-Thread:" + this.threadId + " CityAnswerRequest/checkNewSpecialVehicle ERROR");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * This method sends a new Quest to a Special Vehicle 
 	 * @param receiverId
 	 * @param message
 	 */
 	private void sendQuest(String receiverId, Quest quest){
+		/* Create the message in JSON Format */
+		JsonObject jsmessage = SetUp.fillJSBody("3000", this.city.getId(), receiverId, "Send Quest");
+		
 		try{
-			/* Create the message in JSON Format */
-			JsonObject jsmessage = SetUp.fillJSBody("3000", this.city.getId(), receiverId, "Send Quest");
 			/* Quest to JSON */
 			ObjectMapper mapper = SetUp.getMapper();
 			String quest_string = mapper.writeValueAsString(quest);
