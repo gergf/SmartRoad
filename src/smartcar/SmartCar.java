@@ -31,8 +31,8 @@ public class SmartCar implements MqttCallback{
         /* Initialization */
     	this.id = id;  
     	this.type = "normal"; 
-    	/* TODO: this should be set by asking */
-        this.current_city = "valencia";
+    	/* The topic is known by GPS location  */
+        this.current_city = "valencia/road/E";
     	this.topic = this.current_city;
         
         this.mylocation = location;  
@@ -43,10 +43,6 @@ public class SmartCar implements MqttCallback{
         
         /* Confirm Configuration */
         System.out.println(this.id + " configured!");
-        
-        /* Where Am I? */
-        System.out.println(this.id + ": Looking for a new topic...");
-        this.WhereAmI();
     }
     
     /* Constructor with type for Special Vehicles */

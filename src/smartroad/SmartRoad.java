@@ -249,6 +249,7 @@ public class SmartRoad implements MqttCallback{
 					requesterId = js.get("RequesterId").getAsString(); // Now is the receiverId
 					String[] args = {message, requesterId};
 					new RoadAnswerRequest(this, "6002", args).start();
+					//TODO: This should be done via REST not MQTT 
 				}
 				break;
 			}

@@ -78,22 +78,14 @@ public class EnvironmentOne {
 				
 			}
 		}
-		System.out.println("Segmentes and panels added");
+		System.out.println("Segmentes and panels added!");
 		
-		/* New car*/
+		/* I assume the cars know its topic by GPS location */
 		SmartCar ambulance = new SmartCar("V-000","00", "ambulance"); 
 		SmartCar car_1 = new SmartCar("V-001", "43");
 		
 		
 		Scanner keyboard = new Scanner(System.in); 
-		System.out.print("Press enter to continue...");
-		keyboard.nextLine();
-		
-		
-		// Relaunch the car with the new information
-		car_1.relaunch(); 
-		ambulance.relaunch();
-
 		System.out.print("Press enter to continue..."); 
 		keyboard.nextLine();
 		
