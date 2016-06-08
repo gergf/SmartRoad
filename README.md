@@ -11,7 +11,7 @@ Mosquitto is the broker I have chosen to this project.
 Just becuase I was already familiar with it. 
 
  
-###### Paho Client [(link)](https://eclipse.org/paho/)
+###### Paho Client [(link)](https://eclipse.org/paho/clients/java)
 All the communication in this project uses the Java library of Paho 
 to communicate the several devices through Mqtt.  
 
@@ -23,6 +23,8 @@ My favorite library to the JSON treatment.
 ###### Jackson [(link)](https://github.com/FasterXML/jackson-datatype-jsr310)
 Jackson is used in this project to convert Java objects to JSON and vice versa. 	
 
+_Note: I highly recommend using [maven](https://maven.apache.org) to inject the dependencies._
 
-**Last update: 07/06/2016** 
+
+**Last update: 08/06/2016** 
 

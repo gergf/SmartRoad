@@ -1,5 +1,8 @@
 package environment;
 
+import java.io.IOException;
+import java.util.Scanner;
+
 import smartcar.SmartCar;
 import smartcity.SmartCity;
 import smartroad.Panel;
@@ -7,7 +10,7 @@ import smartroad.Segment;
 import smartroad.SmartRoad;
 
 public class EnvironmentOne {
-	
+
 	/**
 	 * This environment is designed to test WhereIAm and SOS.
 	 */
@@ -81,17 +84,18 @@ public class EnvironmentOne {
 		SmartCar car_1 = new SmartCar("V-001", "43");
 		
 		
-		/* Simulates call between devices */
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		Scanner keyboard = new Scanner(System.in); 
+		System.out.print("Press enter to continue...");
+		keyboard.nextLine();
+		
 		
 		// Relaunch the car with the new information
 		car_1.relaunch(); 
 		ambulance.relaunch();
 
+		System.out.print("Press enter to continue..."); 
+		keyboard.nextLine();
+		
 		// Car S-O-S 
 		car_1.sendSOS();
 	}
