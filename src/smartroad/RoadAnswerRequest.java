@@ -48,7 +48,7 @@ public class RoadAnswerRequest extends Thread {
 				if(args.length < 5){
 					System.err.println("RoadAnswerRequest ERROR: Args is not completed. Code 2000 with flag 1");
 				}else{
-					this.communicate2000toCity(args[0], args[1], args[2], args[4]);
+					this.notifyCitySOScall(args[0], args[1], args[2], args[4]);
 				}
 				break;
 			}
@@ -108,7 +108,7 @@ public class RoadAnswerRequest extends Thread {
 	 * @param location
 	 * @param requesterId
 	 */
-	private void communicate2000toCity(String receiverId, String message, String location, String requesterId){
+	private void notifyCitySOScall(String receiverId, String message, String location, String requesterId){
 		try{
 			JsonObject js = SetUp.fillJSBody("2000", this.road.getId(), receiverId, message);
 			js.addProperty("Location",  location);
