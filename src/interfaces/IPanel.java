@@ -1,4 +1,4 @@
-package smartroad.Interfaces;
+package interfaces;
 
 import smartroad.Segment;
 

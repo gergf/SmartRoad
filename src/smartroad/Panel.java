@@ -3,7 +3,7 @@ package smartroad;
 
 import java.util.UUID;
 
-import smartroad.Interfaces.IPanel;
+import interfaces.IPanel;
 
 /**
  *

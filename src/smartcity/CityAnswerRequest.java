@@ -52,7 +52,7 @@ public class CityAnswerRequest extends Thread
 		switch(code){
 		/* INFO - Where Am I? */
 		case "1000":
-			answer1000(args[0], args[2]);
+			sendLocation(args[0], args[2]);
 			break;
 		
 		/* Send quest */
@@ -105,7 +105,7 @@ public class CityAnswerRequest extends Thread
 	
 	/* Responses */
 	
-	private void answer1000(String receiverId, String location){
+	private void sendLocation(String receiverId, String location){
 		/* Awesome code here */
 		SmartRoad road = city.calculatelocation(location);
 		
