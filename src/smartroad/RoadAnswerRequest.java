@@ -41,7 +41,7 @@ public class RoadAnswerRequest extends Thread {
 			switch(args[3]){
 			/* answer the request 2000 to check the SOS call */
 			case "0":	
-				this.answer2000(args[0], args[1]);
+				this.checkSOScall(args[0], args[1]);
 				break;
 			/* Send the emergency to the city */
 			case "1": 
@@ -87,7 +87,7 @@ public class RoadAnswerRequest extends Thread {
 	 * @param receiverId
 	 * @param message
 	 */
-	private void answer2000(String receiverId, String message ){
+	private void checkSOScall(String receiverId, String message ){
 		try{
 			JsonObject js = SetUp.fillJSBody("6000", this.road.getId(), receiverId, message);
 			
