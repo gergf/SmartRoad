@@ -13,6 +13,7 @@ import com.google.gson.JsonParser;
 import environment.SetUp;
 import event.Emergency;
 import event.Quest;
+import smartcar.Ambulance;
 import smartcar.SpecialVehicle;
 import smartroad.SmartRoad;
 
@@ -209,7 +210,7 @@ public class SmartCity implements MqttCallback{
 					Emergency emergency = new Emergency(requesterId, roadId, this.id, emergency_location , "SOS" );
 					/* The city should ask the the nearest ambulance to calculate this */
 					SpecialVehicle ambulance = null; 
-					
+					// CHECK
 					/* Search one ambulance */
 					for (SpecialVehicle s : this.specialVechicleList){
 						/* Ambulance */

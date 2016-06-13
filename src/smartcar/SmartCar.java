@@ -217,7 +217,7 @@ public class SmartCar implements MqttCallback{
     /**
      * Notify the city that the quest has been completed
      */
-    private void notifyCityQuestCompleted(Quest quest){
+    protected void notifyCityQuestCompleted(Quest quest){
 			/* Create the message in JSON Format */
 		JsonObject jsmessage = SetUp.fillJSBody("7000", this.id, "C-000", 
 				"The quest (" + quest.getId() + ") has been completed.");
@@ -247,7 +247,7 @@ public class SmartCar implements MqttCallback{
      * @param current
      * @param next
      */
-    private void notifyCityMyLocation(String last, String current, String next){
+    protected void notifyCityMyLocation(String last, String current, String next){
     	/* Send message to the city to handle the segments in my route */
     	JsonObject jsmessage = SetUp.fillJSBody("1100", this.id, "C-000", "My location (last, current and next)");
     	jsmessage.addProperty("LastLocation", last);
@@ -305,14 +305,7 @@ public class SmartCar implements MqttCallback{
 				/* Received Quest */
 				switch(requestCode){
 				case "000": 
-					System.out.println(this.id + ": I have received a new Quest.");
-					/* JSON to Quest */
-					ObjectMapper mapper = SetUp.getMapper();
-					String jsQuest = js.get("Quest").getAsString();
-					Quest quest = mapper.readValue(jsQuest, Quest.class);
-					/* Do the quest (I should be available) */
-					this.doQuest(quest);
-					break;
+					/* Car does not do quests */
 				}
 				break;
 			
@@ -368,20 +361,8 @@ public class SmartCar implements MqttCallback{
     
     /* end MqttInterface */
 	
-	/* Quests, 
-	 * for now, all the quest are "go to somewhere to attend an event"  */
-	private void doQuest(Quest quest) {
-		/* Read the quest */
-		ArrayList<String> route = quest.getRoute();
-		/* Go to ... */
-		System.out.println(this.id + ": Going from " + route.get(0) + " to " + route.get(route.size()-1)); 
-		this.goTo(route);
-		/* Tell the city that the quest has been completed */
-		this.notifyCityQuestCompleted(quest);
-	}
-	
 	/* Actions */
-	private void goTo(ArrayList<String> route){
+	protected void goTo(ArrayList<String> route){
 		boolean arrived = false;
 		int index = 0;  
 		String last, current, next; /* Location to notify the city */
