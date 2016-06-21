@@ -180,7 +180,7 @@ public class SmartCity implements MqttCallback{
 						
 						/* Answer */
 						String[] args = {senderId, "", location};
-						new CityAnswerRequest(this, "1000", args).start();
+						new CityAnswerRequest(this, "5000", args).start();
 					}catch(Exception e){
 						System.err.println(this.id + "messageArrived > Theme 1 > 000: ERROR"); 
 					} 

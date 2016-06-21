@@ -21,7 +21,7 @@ The code is consists of four digits.
     8: SpecialEvents 
 
 # 2nd-4th digits / REQUEST CODE #  
-    ## REQUESTS  ##
+    ## REQUESTS ##
 
     1xxx:
         /* Normal Car */

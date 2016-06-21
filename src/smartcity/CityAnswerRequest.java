@@ -50,11 +50,6 @@ public class CityAnswerRequest extends Thread
 	public void run() {
 		/* Identify the request */
 		switch(code){
-		/* INFO - Where Am I? */
-		case "1000":
-			sendLocation(args[0], args[2]);
-			break;
-		
 		/* Send quest */
 		case "3000":
 			if(this.quest != null)
@@ -71,6 +66,11 @@ public class CityAnswerRequest extends Thread
 		/* Close segment */
 		case "3002":
 			this.closeSegment(args[0], args[1], args[2], args[3]);
+			break;
+		
+		/* INFO - Where Am I? */
+		case "5000":
+			sendLocation(args[0], args[2]);
 			break;
 		
 		/* The emergency has been completed. Notify the requester */

@@ -1,0 +1,22 @@
+JSON es un formato de mensajería especialmente ligero e independiente del lenguaje
+de programación. Es facilmente legible por los humanos, y además fácil de parsear
+por las computadoras. Está basado en un subconjunto de JavaScript, y fue popularizado 
+por Douglas Crockford. Actualmente es el formato más utilizado en comunicaciones 
+asíncronas buscador/servidor, remplazando a XML el cual es utilizado por AJAX. 
+
+JSON se ajusta perfectamente a las condiciones de este proyecto, donde los dispositivos
+no cuentan con una gran capacidad de cómputo, por lo que la sencillez del formato 
+es un gran punto a favor. También se tuvo en cuenta que en el entorno de IoT se 
+intenta armonizar una gran diversidad de dispositivos, y conectarlos con la web, JSON 
+nos permite adjustarnos a lo que actualmente se encuentra "de moda" y nos brinda mayor
+compatibilidad con futuras aplicaciones que necesiten establecer comunicación con 
+el sistema encargado de gestionar la SmartCity. 
+
+Por último, para este proyecto se ha tomado como referencia la iniciativa VLCi, 
+y dentro de su documentación se puede observar que han optado por el formato JSON 
+como estandar de mensajería para sus comunicaciones; por lo que esto es otro punto 
+a favor en vistas a una posible implementación real en el proyecto VLCi. 
+
+Sources: 
+http://www.json.org/
+http://www.valencia.es/ayuntamiento/DatosAbiertos.nsf/0/2113BD9D1693D7EAC1257C6600449981/$FILE/API%20APPCIUDAD%20v3.pdf?OpenElement&lang=1
