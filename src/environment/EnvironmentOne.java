@@ -23,14 +23,14 @@ public class EnvironmentOne {
 		
 		
 		/* New city */
-		SmartCity valencia = new SmartCity("C-000", "valencia");
+		SmartCity atlantis = new SmartCity("C-000", "atlantis");
 		
 		/* New road */
-		SmartRoad road_A = new SmartRoad("R-000", "A", "0", valencia);
-		SmartRoad road_B = new SmartRoad("R-001", "B", "1", valencia);
-		SmartRoad road_C = new SmartRoad("R-002", "C", "2", valencia);
-		SmartRoad road_D = new SmartRoad("R-003", "D", "3", valencia);
-		SmartRoad road_E = new SmartRoad("R-004", "E", "4", valencia);; 
+		SmartRoad road_A = new SmartRoad("R-000", "A", "0", atlantis);
+		SmartRoad road_B = new SmartRoad("R-001", "B", "1", atlantis);
+		SmartRoad road_C = new SmartRoad("R-002", "C", "2", atlantis);
+		SmartRoad road_D = new SmartRoad("R-003", "D", "3", atlantis);
+		SmartRoad road_E = new SmartRoad("R-004", "E", "4", atlantis);; 
 		
 		/* Create Segments */
 		Segment s; 
@@ -82,8 +82,8 @@ public class EnvironmentOne {
 		System.out.println("Segmentes and panels added!");
 		
 		/* I assume the cars know its topic by GPS location */
-		Ambulance ambulance = new Ambulance("V-000","00", "ambulance"); 
-		SmartCar car_1 = new SmartCar("V-001", "43");
+		Ambulance ambulance = new Ambulance("A-000","00", "ambulance"); 
+		SmartCar car_1 = new SmartCar("V-000", "43");
 		
 		
 		Scanner keyboard = new Scanner(System.in); 

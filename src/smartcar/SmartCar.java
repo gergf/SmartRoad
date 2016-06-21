@@ -32,7 +32,7 @@ public class SmartCar implements MqttCallback{
     	this.id = id;  
     	this.type = "normal"; 
     	/* The topic is known by GPS location  */
-        this.current_city = "valencia/road/E";
+        this.current_city = "atlantis/road/E";
     	this.topic = this.current_city;
         
         this.mylocation = location;  
@@ -52,7 +52,7 @@ public class SmartCar implements MqttCallback{
     	this.type = type;  
     	
     	/* Special vehicles have a special channel  */
-    	this.current_city = "valencia"; 
+    	this.current_city = "atlantis"; 
         this.topic = current_city + "/" + this.type;
         
         this.mylocation = location;  
